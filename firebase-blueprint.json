@@ -1,0 +1,136 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "User profile with role and associations.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "role": { "type": "string", "enum": ["patient", "caregiver", "doctor"] },
+        "onboarded": { "type": "boolean" },
+        "age": { "type": "string" },
+        "condition": { "type": "string" },
+        "specialization": { "type": "string" },
+        "license": { "type": "string" },
+        "relationship": { "type": "string" },
+        "phone": { "type": "string" },
+        "emergencyContact": { "type": "string" },
+        "language": { "type": "string", "enum": ["en", "hi"] },
+        "caregiverIds": { "type": "array", "items": { "type": "string" } },
+        "patientIds": { "type": "array", "items": { "type": "string" } },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "email", "role"]
+    },
+    "Medication": {
+      "title": "Medication",
+      "description": "Medication details and schedule.",
+      "type": "object",
+      "properties": {
+        "patientId": { "type": "string" },
+        "name": { "type": "string" },
+        "dosage": { "type": "string" },
+        "frequency": { "type": "string" },
+        "scheduleTimes": { "type": "array", "items": { "type": "string" } },
+        "pillsRemaining": { "type": "number" },
+        "refillAlertThreshold": { "type": "number" },
+        "interactions": { "type": "array", "items": { "type": "string" } },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["patientId", "name", "scheduleTimes"]
+    },
+    "Dose": {
+      "title": "Medication Dose",
+      "description": "A specific dose event.",
+      "type": "object",
+      "properties": {
+        "medId": { "type": "string" },
+        "patientId": { "type": "string" },
+        "scheduledAt": { "type": "string", "format": "date-time" },
+        "takenAt": { "type": "string", "format": "date-time" },
+        "status": { "type": "string", "enum": ["pending", "taken", "missed", "snoozed"] },
+        "photoUrl": { "type": "string" }
+      },
+      "required": ["medId", "patientId", "scheduledAt", "status"]
+    },
+    "RiskScore": {
+      "title": "Risk Score",
+      "description": "Patient risk analysis.",
+      "type": "object",
+      "properties": {
+        "score": { "type": "number" },
+        "lastUpdated": { "type": "string", "format": "date-time" },
+        "explanation": { "type": "string" },
+        "trend": { "type": "string", "enum": ["improving", "stable", "declining"] }
+      },
+      "required": ["score", "lastUpdated"]
+    },
+    "Alert": {
+      "title": "Medication Alert",
+      "description": "System or manual alerts.",
+      "type": "object",
+      "properties": {
+        "patientId": { "type": "string" },
+        "caregiverId": { "type": "string" },
+        "type": { "type": "string", "enum": ["missed_dose", "low_supply", "interaction", "sos"] },
+        "priority": { "type": "string", "enum": ["low", "medium", "critical"] },
+        "message": { "type": "string" },
+        "read": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["patientId", "type", "priority", "message", "read"]
+    },
+    "Chat": {
+      "title": "Chat Thread",
+      "description": "Conversation between patient and caregiver.",
+      "type": "object",
+      "properties": {
+        "participants": { "type": "array", "items": { "type": "string" } }
+      },
+      "required": ["participants"]
+    },
+    "ChatMessage": {
+      "title": "Chat Message",
+      "description": "Individual chat message.",
+      "type": "object",
+      "properties": {
+        "senderId": { "type": "string" },
+        "text": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["senderId", "text", "timestamp"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": "User",
+      "description": "User profiles"
+    },
+    "medications/{medId}": {
+      "schema": "Medication",
+      "description": "Medication list"
+    },
+    "doses/{doseId}": {
+      "schema": "Dose",
+      "description": "Dose events"
+    },
+    "riskScores/{patientId}": {
+      "schema": "RiskScore",
+      "description": "Patient risk analysis"
+    },
+    "alerts/{alertId}": {
+      "schema": "Alert",
+      "description": "System alerts"
+    },
+    "chats/{chatId}": {
+      "schema": "Chat",
+      "description": "Chat threads"
+    },
+    "chats/{chatId}/messages/{messageId}": {
+      "schema": "ChatMessage",
+      "description": "Chat messages"
+    }
+  }
+}

@@ -1,0 +1,109 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Authenticated helper
+    function isSignedIn() { return request.auth != null; }
+    function isOwner(userId) { return isSignedIn() && request.auth.uid == userId; }
+
+    // Caregiver check
+    function isCaregiverOf(patientId) {
+      return isSignedIn() && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        patientId in get(/databases/$(database)/documents/users/$(request.auth.uid)).data.keys() == false;
+    }
+
+    // Role check (safe - returns false if doc doesn't exist)
+    function hasRole(role) {
+      return isSignedIn() && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == role;
+    }
+
+    // --- Users ---
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId) || (isSignedIn() && hasRole('doctor'));
+    }
+
+    // --- Medications ---
+    // The app uses 'userId' field (not 'patientId') — support both
+    match /medications/{medId} {
+      allow read: if isSignedIn() && (
+        resource.data.userId == request.auth.uid ||
+        resource.data.patientId == request.auth.uid ||
+        hasRole('doctor') ||
+        hasRole('caregiver')
+      );
+      allow create: if isSignedIn() && (
+        request.resource.data.userId == request.auth.uid ||
+        request.resource.data.patientId == request.auth.uid ||
+        hasRole('doctor')
+      );
+      allow update: if isSignedIn() && (
+        resource.data.userId == request.auth.uid ||
+        resource.data.patientId == request.auth.uid ||
+        hasRole('doctor') ||
+        hasRole('caregiver')
+      );
+      allow delete: if isSignedIn() && (
+        resource.data.userId == request.auth.uid ||
+        resource.data.patientId == request.auth.uid ||
+        hasRole('doctor')
+      );
+    }
+
+    // --- Doses ---
+    match /doses/{doseId} {
+      allow read: if isSignedIn() && (
+        resource.data.userId == request.auth.uid ||
+        resource.data.patientId == request.auth.uid ||
+        hasRole('doctor') ||
+        hasRole('caregiver')
+      );
+      allow create: if isSignedIn() && (
+        request.resource.data.userId == request.auth.uid ||
+        request.resource.data.patientId == request.auth.uid ||
+        hasRole('doctor')
+      );
+      allow update: if isSignedIn() && (
+        resource.data.userId == request.auth.uid ||
+        resource.data.patientId == request.auth.uid ||
+        hasRole('doctor') ||
+        hasRole('caregiver')
+      );
+    }
+
+    // --- Risk Scores ---
+    match /riskScores/{patientId} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn() && (patientId == request.auth.uid || hasRole('doctor'));
+    }
+
+    // --- Alerts ---
+    match /alerts/{alertId} {
+      allow read: if isSignedIn() && (
+        resource.data.patientId == request.auth.uid ||
+        resource.data.userId == request.auth.uid ||
+        hasRole('doctor') ||
+        hasRole('caregiver')
+      );
+      allow create: if isSignedIn() && (
+        request.resource.data.patientId == request.auth.uid ||
+        request.resource.data.userId == request.auth.uid ||
+        hasRole('doctor') ||
+        hasRole('caregiver')
+      );
+      allow update: if isSignedIn() && (
+        resource.data.patientId == request.auth.uid ||
+        resource.data.userId == request.auth.uid
+      );
+    }
+
+    // --- Chats ---
+    match /chats/{messageId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && request.resource.data.senderId == request.auth.uid;
+    }
+  }
+}

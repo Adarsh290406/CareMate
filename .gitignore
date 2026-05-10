@@ -1,0 +1,32 @@
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+
+# Environment variables - NEVER commit these
+.env
+.env.local
+.env.production
+.env.staging
+
+# Firebase config - contains API keys
+firebase-applet-config.json
+
+# Keep the example files
+!.env.example
+!firebase-applet-config.example.json
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+
+# Firebase Functions
+functions/node_modules/
+functions/lib/

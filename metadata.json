@@ -1,0 +1,6 @@
+{
+  "name": "CareMate AI",
+  "description": "Intelligent medical oversight platform featuring AI-powered risk scoring, predictive non-adherence analysis, and multilingual voice assistance for total adherence.",
+  "requestFramePermissions": ["notifications", "microphone", "camera"],
+  "majorCapabilities": ["pwa", "realtime-sync", "ai-adherence"]
+}

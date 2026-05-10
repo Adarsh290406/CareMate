@@ -1,0 +1,23 @@
+{
+  "name": "CareMate",
+  "short_name": "CareMate",
+  "description": "Smart medication adherence platform",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0D1117",
+  "theme_color": "#00C896",
+  "icons": [
+    {
+      "src": "https://api.dicebear.com/7.x/shapes/svg?seed=medimind&backgroundColor=00C896",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://api.dicebear.com/7.x/shapes/svg?seed=medimind&backgroundColor=00C896",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "orientation": "portrait"
+}
