@@ -82,10 +82,10 @@ export default function Caregiver() {
   }, [profile]);
 
   return (
-    <div className="min-h-screen bg-background p-6">
+    <div className="min-h-screen bg-bg-main p-6 transition-colors duration-300">
       <header className="mb-10">
-        <h1 className="text-4xl font-bold tracking-tighter mb-2">Care Circles</h1>
-        <p className="text-text-muted">Monitoring {patients.length} patients in your care</p>
+        <h1 className="text-4xl font-bold tracking-tighter mb-2 text-text-primary">Care Circles</h1>
+        <p className="text-text-secondary">Monitoring {patients.length} patients in your care</p>
       </header>
 
       {loading ? (
@@ -94,14 +94,14 @@ export default function Caregiver() {
         </div>
       ) : patients.length === 0 ? (
         <div className="glass p-12 rounded-3xl text-center space-y-6">
-          <Heart className="mx-auto text-primary-accent opacity-20" size={80} />
+          <Heart className="mx-auto text-primary opacity-20" size={80} />
           <div className="space-y-2">
-            <h2 className="text-2xl font-bold">No Patients Linked</h2>
-            <p className="text-text-muted max-w-xs mx-auto">
+            <h2 className="text-2xl font-bold text-text-primary">No Patients Linked</h2>
+            <p className="text-text-secondary max-w-xs mx-auto">
               Share your Caregiver ID with a patient to start monitoring their adherence.
             </p>
           </div>
-          <div className="p-4 bg-white/5 rounded-xl font-mono text-sm border border-white/10 break-all">
+          <div className="p-4 bg-surface-main rounded-xl font-mono text-sm border border-border-main break-all text-text-primary">
             ID: {profile?.id || "Shared on Login"}
           </div>
         </div>
@@ -124,12 +124,12 @@ export default function Caregiver() {
                 <RiskMeter score={patient.risk?.score} />
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <h2 className="text-2xl font-bold tracking-tight">{patient.name}</h2>
+                    <h2 className="text-2xl font-bold tracking-tight text-text-primary">{patient.name}</h2>
                     {patient.hasSOS && (
                       <span className="px-2 py-0.5 bg-danger text-white text-[8px] font-black rounded uppercase tracking-widest">EMERGENCY SOS</span>
                     )}
                   </div>
-                  <div className="flex gap-4 text-[10px] font-black uppercase tracking-widest text-text-muted">
+                  <div className="flex gap-4 text-[10px] font-black uppercase tracking-widest text-text-secondary">
                     <span className="flex items-center gap-1.5"><Heart size={12} className="text-danger fill-danger/20" /> {patient.risk?.trend || "stable"}</span>
                     <span className={cn(
                       "flex items-center gap-1.5",
@@ -184,7 +184,7 @@ export default function Caregiver() {
                     setSelectedPatient(patient);
                     setIsChatOpen(true);
                   }}
-                  className="flex-1 md:flex-none p-3 bg-white/5 border border-white/5 rounded-xl flex items-center justify-center gap-2 hover:bg-white/10 transition-colors"
+                  className="flex-1 md:flex-none p-3 bg-surface-main border border-border-main rounded-xl flex items-center justify-center gap-2 hover:bg-primary/10 transition-colors text-text-primary"
                 >
                   <MessageCircle size={18} />
                   <span className="text-xs font-bold uppercase tracking-widest">Chat</span>

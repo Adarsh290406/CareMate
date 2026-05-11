@@ -368,7 +368,7 @@ export default function Home() {
         </div>
 
         {/* Daily Briefing Card */}
-        <div className="relative overflow-hidden rounded-[2.5rem] bg-surface border border-border group cursor-pointer" onClick={() => setShowInsight(true)}>
+        <div className="relative overflow-hidden rounded-[2.5rem] bg-surface-main border border-border-main group cursor-pointer" onClick={() => setShowInsight(true)}>
            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-ai/5 opacity-50" />
            <div className="relative p-6 flex items-center gap-5">
               <div className="w-14 h-14 rounded-2xl bg-ai/10 flex items-center justify-center text-ai shadow-xl shadow-ai/10 group-hover:scale-110 transition-transform">
@@ -431,7 +431,7 @@ export default function Home() {
       </section>
 
       {/* Zone B: Risk Score Hero */}
-      <section className="bg-[#0D1117] rounded-[var(--radius-card)] p-6 relative overflow-hidden h-[180px] flex flex-col justify-between border border-white/5">
+      <section className="bg-surface-main rounded-[var(--radius-card)] p-6 relative overflow-hidden h-[180px] flex flex-col justify-between border border-border-main">
         <div className="absolute top-3 right-3 z-10">
            <button 
              onClick={fetchExplanation}
@@ -447,7 +447,7 @@ export default function Home() {
               <circle
                 cx="50" cy="50" r="40"
                 fill="none"
-                stroke="white"
+                stroke="var(--text-primary)"
                 strokeOpacity="0.05"
                 strokeWidth="8"
                 strokeDasharray="125 251"
@@ -472,13 +472,13 @@ export default function Home() {
           </div>
           
           <div className="flex flex-col items-end gap-2 pr-2">
-            <div className="flex items-center gap-2 text-white/40">
+            <div className="flex items-center gap-2 text-text-secondary/40">
               <TrendingUp size={12} />
               <span className="text-[10px] uppercase font-black tracking-widest">+4% Trend</span>
             </div>
             <div className="w-24 h-8 flex items-end gap-1 px-1 mt-auto">
               {[0.4, 0.6, 0.5, 0.8, 0.9].map((h, i) => (
-                 <div key={i} className="flex-1 bg-white/10 rounded-t-sm" style={{ height: `${h * 100}%` }} />
+                 <div key={i} className="flex-1 bg-text-primary/10 rounded-t-sm" style={{ height: `${h * 100}%` }} />
               ))}
             </div>
           </div>
@@ -507,7 +507,7 @@ export default function Home() {
       {/* Zone B: Today's Medications */}
       <section className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-sm font-extrabold uppercase tracking-widest text-[var(--text-secondary)]">Today's Schedule</h2>
+          <h2 className="text-sm font-extrabold uppercase tracking-widest text-text-secondary">Today's Schedule</h2>
           <button className="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-1">
             View All <ChevronRight size={12} />
           </button>

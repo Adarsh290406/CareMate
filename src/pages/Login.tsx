@@ -181,28 +181,28 @@ export default function Login() {
     >
       <button 
         onClick={() => navigate("/")}
-        className="flex items-center gap-2 text-xs font-bold text-text-muted hover:text-text-primary mb-6 mx-auto uppercase tracking-widest pl-2"
+        className="flex items-center gap-2 text-xs font-bold text-text-secondary opacity-60 hover:text-text-primary mb-6 mx-auto uppercase tracking-widest pl-2"
       >
         <ChevronLeft size={14} /> Back to Home
       </button>
 
       <button 
         onClick={() => { setIsRegistering(false); setView("role"); }}
-        className="w-full h-16 bg-primary text-white rounded-2xl font-extrabold text-[15px] uppercase tracking-[0.2em] flex items-center justify-center gap-3 shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all outline-none"
+        className="w-full h-16 bg-primary text-black rounded-2xl font-extrabold text-[15px] uppercase tracking-[0.2em] flex items-center justify-center gap-3 shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all outline-none"
       >
         Sign In <ArrowRight size={18} />
       </button>
       <button 
         onClick={() => { setIsRegistering(true); setView("role"); }}
-        className="w-full h-16 bg-surface border-2 border-primary/20 text-primary rounded-2xl font-extrabold text-[15px] uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:bg-primary/5 transition-all"
+        className="w-full h-16 bg-surface-main border-2 border-primary/20 text-primary rounded-2xl font-extrabold text-[15px] uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:bg-primary/5 transition-all"
       >
         Create Account
       </button>
       
       <div className="pt-4 flex items-center justify-center gap-4 opacity-50">
-        <div className="h-[1px] flex-1 bg-border"></div>
-        <span className="text-[10px] font-black uppercase tracking-widest text-text-muted">Connect with CareMate</span>
-        <div className="h-[1px] flex-1 bg-border"></div>
+        <div className="h-[1px] flex-1 bg-border-main"></div>
+        <span className="text-[10px] font-black uppercase tracking-widest text-text-secondary">Connect with CareMate</span>
+        <div className="h-[1px] flex-1 bg-border-main"></div>
       </div>
     </motion.div>
   );
@@ -214,7 +214,7 @@ export default function Login() {
       exit={{ opacity: 0, y: -20 }}
       className="space-y-4"
     >
-      <button onClick={() => setView("welcome")} className="flex items-center gap-2 text-xs font-bold text-text-muted hover:text-text-primary mb-4">
+      <button onClick={() => setView("welcome")} className="flex items-center gap-2 text-xs font-bold text-text-secondary opacity-60 hover:text-text-primary mb-4">
         <ChevronLeft size={14} /> Back
       </button>
 
@@ -222,29 +222,29 @@ export default function Login() {
         <h2 className="text-2xl font-black tracking-tight text-text-primary">
           {isRegistering ? "Join as..." : "Sign in as..."}
         </h2>
-        <p className="text-xs text-text-muted">Choose your role to get specialized features.</p>
+        <p className="text-xs text-text-secondary opacity-60">Choose your role to get specialized features.</p>
       </div>
 
       <button 
         onClick={() => { setRole("patient"); setView("method"); }}
-        className="w-full h-14 bg-surface border-2 border-border text-text-primary rounded-xl font-bold flex items-center justify-between px-6 hover:bg-primary/5 hover:border-primary/30 transition-all"
+        className="w-full h-14 bg-surface-main border-2 border-border-main text-text-primary rounded-xl font-bold flex items-center justify-between px-6 hover:bg-primary/5 hover:border-primary/30 transition-all"
       >
         <span>I am a Patient</span>
         <Heart size={18} className="text-danger" />
       </button>
       <button 
         onClick={() => { setRole("caregiver"); setView("method"); }}
-        className="w-full h-14 bg-surface border-2 border-border text-text-primary rounded-xl font-bold flex items-center justify-between px-6 hover:bg-primary/5 hover:border-primary/30 transition-all"
+        className="w-full h-14 bg-surface-main border-2 border-border-main text-text-primary rounded-xl font-bold flex items-center justify-between px-6 hover:bg-primary/5 hover:border-primary/30 transition-all"
       >
         <span>I am a Caregiver</span>
         <Shield size={18} className="text-primary" />
       </button>
       <button 
         onClick={() => { setRole("doctor"); setView("method"); }}
-        className="w-full h-14 bg-surface border-2 border-border text-text-primary rounded-xl font-bold flex items-center justify-between px-6 hover:bg-ai/5 hover:border-ai/30 transition-all"
+        className="w-full h-14 bg-surface-main border-2 border-border-main text-text-primary rounded-xl font-bold flex items-center justify-between px-6 hover:bg-primary/5 hover:border-primary/30 transition-all"
       >
         <span>Healthcare Provider</span>
-        <Brain size={18} className="text-ai" />
+        <Brain size={18} className="text-primary" />
       </button>
     </motion.div>
   );
@@ -561,7 +561,7 @@ export default function Login() {
   );
 
   return (
-    <div className="min-h-screen bg-bg flex flex-col items-center justify-center p-8 relative overflow-hidden">
+    <div className="min-h-screen bg-bg-main flex flex-col items-center justify-center p-8 relative overflow-hidden transition-colors duration-300">
       {/* Background Decorative Elements */}
       <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden opacity-30">
         <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.1, 0.3] }} transition={{ duration: 10, repeat: Infinity }} className="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] bg-primary/20 rounded-full blur-[100px]" />
@@ -574,7 +574,7 @@ export default function Login() {
             <motion.div 
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              className="w-20 h-20 rounded-[28px] bg-primary flex items-center justify-center text-black shadow-2xl shadow-primary/20"
+              className="w-20 h-20 rounded-[28px] bg-primary flex items-center justify-center text-white shadow-2xl shadow-primary/20"
             >
                <Brain size={40} />
             </motion.div>
@@ -589,7 +589,7 @@ export default function Login() {
                 exit={{ opacity: 0, y: -10 }}
                 className="space-y-2"
               >
-                <h1 className="text-5xl font-extrabold tracking-tighter italic uppercase text-white">CareMate</h1>
+                <h1 className="text-5xl font-extrabold tracking-tighter italic uppercase text-text-primary">CareMate</h1>
                 <p className="text-text-secondary text-lg font-medium leading-tight">Intelligent Medical Oversight</p>
               </motion.div>
             )}

@@ -31,7 +31,7 @@ const Nav = () => {
   return (
     <nav className={cn(
       "fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 sm:px-6 md:px-12 py-5 transition-all duration-500",
-      isScrolled ? "bg-dark-primary/95 backdrop-blur-xl border-b border-white/5 py-3 sm:py-4" : "bg-transparent"
+      isScrolled ? "bg-surface-main/95 backdrop-blur-xl border-b border-border-main py-3 sm:py-4" : "bg-transparent"
     )}>
       <div className="flex items-center gap-2 sm:gap-3 cursor-pointer shrink-0" onClick={() => navigate("/")}>
         <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-primary flex items-center justify-center text-black shadow-[0_0_20px_rgba(0,212,170,0.3)] shrink-0">
@@ -119,8 +119,8 @@ const Counter = ({ value, duration = 2 }: { value: string, duration?: number }) 
 };
 
 const StatItem = ({ label, value }: any) => (
-  <div className="p-8 md:p-12 flex flex-col items-center justify-center text-center group border-x border-white/5 first:border-l-0 last:border-r-0">
-     <motion.span className="text-4xl md:text-6xl font-display font-black text-white italic tracking-tighter mb-2">
+  <div className="p-8 md:p-12 flex flex-col items-center justify-center text-center group border-x border-border-main first:border-l-0 last:border-r-0">
+     <motion.span className="text-4xl md:text-6xl font-display font-black text-text-primary italic tracking-tighter mb-2">
        <Counter value={value} />
      </motion.span>
      <span className="text-[11px] font-bold uppercase tracking-[3px] text-text-secondary">{label}</span>
@@ -134,7 +134,7 @@ const FeatureCard = ({ icon: Icon, title, description, color, delay = 0 }: any) 
     transition={{ delay, duration: 0.5 }}
     viewport={{ once: true }}
     whileHover={{ y: -8 }}
-    className="p-8 glass rounded-2xl border border-white/5 hover:border-primary/30 transition-all duration-300 group"
+    className="p-8 glass rounded-2xl border border-border-main hover:border-primary/30 transition-all duration-300 group"
   >
     <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center mb-6 transition-all group-hover:scale-110", color)}>
       <Icon size={24} />
@@ -204,7 +204,7 @@ export default function Landing() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-dark-primary text-text-primary selection:bg-primary/30 selection:text-white font-sans overflow-x-hidden">
+    <div className="min-h-screen bg-bg-main text-text-primary selection:bg-primary/30 selection:text-white font-sans overflow-x-hidden transition-colors duration-300">
       <Nav />
 
       {/* Hero Section */}
@@ -213,8 +213,8 @@ export default function Landing() {
         <div className="absolute inset-0 z-0">
           <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-primary/10 blur-[120px] rounded-full animate-pulse" />
           <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-ai/10 blur-[120px] rounded-full animate-pulse" />
-          <div className="absolute inset-0 opacity-[0.03]" 
-               style={{ backgroundImage: `linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)`, backgroundSize: '60px 60px' }} 
+          <div className="absolute inset-0 opacity-[0.05]" 
+               style={{ backgroundImage: `linear-gradient(currentColor 1px, transparent 1px), linear-gradient(90deg, currentColor 1px, transparent 1px)`, backgroundSize: '60px 60px' }} 
           />
         </div>
 
@@ -311,15 +311,15 @@ export default function Landing() {
                       { name: "Lisinopril", time: "1:00 PM", color: "border-warning", status: "Upcoming" },
                       { name: "Aspirin", time: "8:00 PM", color: "border-secondary", status: "Night" }
                     ].map((med, i) => (
-                      <div key={i} className={cn("p-4 bg-white/5 border-l-4 rounded-r-xl flex items-center justify-between", med.color)}>
+                      <div key={i} className={cn("p-4 bg-bg-main border-l-4 rounded-r-xl flex items-center justify-between border-border-main", med.color)}>
                          <div className="flex items-center gap-3">
-                           <Pill size={16} className="text-white/60" />
+                           <Pill size={16} className="text-text-secondary opacity-60" />
                            <div>
-                             <p className="text-xs font-bold text-white">{med.name}</p>
-                             <p className="text-[9px] text-white/40">{med.time}</p>
+                             <p className="text-xs font-bold text-text-primary">{med.name}</p>
+                             <p className="text-[9px] text-text-secondary opacity-60">{med.time}</p>
                            </div>
                          </div>
-                         <div className="text-[9px] font-bold opacity-50">{med.status}</div>
+                         <div className="text-[9px] font-bold text-text-secondary opacity-50">{med.status}</div>
                       </div>
                     ))}
                   </div>
@@ -328,9 +328,9 @@ export default function Landing() {
                     Mark as Taken <Check size={14} />
                   </button>
 
-                  <div className="p-4 bg-white/5 rounded-2xl border border-white/10 text-center">
-                    <p className="text-[10px] text-white/40 uppercase tracking-widest mb-1">Risk Score</p>
-                    <p className="text-2xl font-mono font-bold text-primary">72<span className="text-xs opacity-40 ml-1">Moderate</span></p>
+                  <div className="p-4 bg-bg-main rounded-2xl border border-border-main text-center">
+                    <p className="text-[10px] text-text-secondary uppercase tracking-widest mb-1 opacity-60">Risk Score</p>
+                    <p className="text-2xl font-mono font-bold text-primary">72<span className="text-xs opacity-40 ml-1 text-text-secondary">Moderate</span></p>
                   </div>
                </div>
             </motion.div>
@@ -370,7 +370,7 @@ export default function Landing() {
       </section>
 
       {/* Stats Bar */}
-      <section className="bg-dark-secondary border-y border-white/5 relative z-20">
+      <section className="bg-surface-main border-y border-border-main relative z-20">
         <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-white/5 text-center">
            <StatItem label="Indians Affected by Adherence" value="50Cr+" />
            <StatItem label="AI-Powered Features" value="29" />
@@ -454,7 +454,7 @@ export default function Landing() {
       </section>
 
       {/* How it Works */}
-      <section id="how-it-works" className="py-32 px-6 md:px-12 bg-dark-secondary/50 border-y border-white/5">
+      <section id="how-it-works" className="py-32 px-6 md:px-12 bg-surface-main/50 border-y border-border-main">
         <div className="max-w-4xl mx-auto space-y-16">
           <div className="text-center space-y-4">
             <span className="text-primary text-[10px] font-black uppercase tracking-[5px]">Simple for Everyone</span>

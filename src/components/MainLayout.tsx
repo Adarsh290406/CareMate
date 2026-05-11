@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
-import { Home, Pill, MessageSquare, Heart, User, Bell, ChevronLeft, X, Brain, Settings } from "lucide-react";
+import { Home, Pill, MessageSquare, Heart, User, Bell, ChevronLeft, X, Brain, Settings, Sun, Moon } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { cn } from "../lib/utils";
 import { NotificationManager } from "./NotificationManager";
@@ -17,10 +17,20 @@ export default function MainLayout({ children }: MainLayoutProps) {
   const [showInstall, setShowInstall] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light');
   const [notifications] = useState([
     { id: 1, title: "Welcome to CareMate!", message: "Your intelligent health oversight is now active.", time: "Just now", type: "info" },
     { id: 2, title: "PWA Available", message: "Install CareMate for the best offline experience.", time: "5m ago", type: "safe" }
   ]);
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => prev === 'light' ? 'dark' : 'light');
+  };
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (e: any) => {
@@ -84,18 +94,18 @@ export default function MainLayout({ children }: MainLayoutProps) {
               initial={{ x: 300, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: 300, opacity: 0 }}
-              className="fixed top-0 right-0 bottom-0 w-80 bg-dark-elevated border-l border-white/5 z-[80] shadow-2xl p-6 overflow-y-auto no-scrollbar"
+              className="fixed top-0 right-0 bottom-0 w-80 bg-surface-main border-l border-border-main z-[80] shadow-2xl p-6 overflow-y-auto no-scrollbar"
             >
               <div className="flex items-center justify-between mb-8">
-                <h2 className="text-xl font-black italic uppercase tracking-tight text-white">Notifications</h2>
-                <button onClick={() => setShowNotifications(false)} className="p-2 hover:bg-white/5 rounded-full transition-colors">
+                <h2 className="text-xl font-black italic uppercase tracking-tight text-text-primary">Notifications</h2>
+                <button onClick={() => setShowNotifications(false)} className="p-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-full transition-colors">
                   <X size={20} className="text-text-secondary" />
                 </button>
               </div>
               
               <div className="space-y-4">
                 {notifications.map((n) => (
-                  <div key={n.id} className="p-4 rounded-2xl bg-white/5 border border-white/5 space-y-2 group hover:bg-white/10 transition-colors">
+                  <div key={n.id} className="p-4 rounded-2xl bg-bg-main border border-border-main space-y-2 group hover:bg-primary/5 transition-colors">
                     <div className="flex items-center justify-between">
                       <span className={cn(
                         "text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full",
@@ -103,13 +113,13 @@ export default function MainLayout({ children }: MainLayoutProps) {
                       )}>{n.type}</span>
                       <span className="text-[10px] text-text-secondary font-bold">{n.time}</span>
                     </div>
-                    <h3 className="text-sm font-bold text-white">{n.title}</h3>
+                    <h3 className="text-sm font-bold text-text-primary">{n.title}</h3>
                     <p className="text-xs text-text-secondary leading-relaxed">{n.message}</p>
                   </div>
                 ))}
               </div>
               
-              <div className="mt-8 pt-8 border-t border-white/5 text-center">
+              <div className="mt-8 pt-8 border-t border-border-main text-center">
                 <button className="text-[10px] font-black uppercase tracking-widest text-primary hover:underline">Mark all as read</button>
               </div>
             </motion.div>
@@ -151,21 +161,27 @@ export default function MainLayout({ children }: MainLayoutProps) {
       {/* Top Status Bar */}
       <header className={cn(
         "fixed top-0 left-0 right-0 h-16 px-4 sm:px-6 flex items-center justify-between z-[60] transition-all duration-300",
-        scrolled || showInstall ? "bg-dark-primary/95 backdrop-blur-xl border-b border-white/5 shadow-2xl shadow-primary/5" : "bg-transparent"
+        scrolled || showInstall ? "bg-surface-main/95 backdrop-blur-xl border-b border-border-main shadow-2xl shadow-primary/5" : "bg-transparent"
       )}>
         <Link to="/" className="flex items-center gap-2 group">
-          <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center text-black shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
+          <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center text-white shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
             <Brain size={20} />
           </div>
-          <span className="text-xl sm:text-2xl font-display font-black tracking-tighter italic uppercase text-white">CareMate</span>
+          <span className="text-xl sm:text-2xl font-display font-black tracking-tighter italic uppercase text-text-primary">CareMate</span>
         </Link>
         <div className="flex items-center gap-2 sm:gap-4">
           <button 
+            onClick={toggleTheme}
+            className="p-2 hover:bg-primary/10 rounded-xl transition-colors text-text-secondary hover:text-primary"
+          >
+            {theme === 'light' ? <Moon size={22} /> : <Sun size={22} />}
+          </button>
+          <button 
             onClick={() => setShowNotifications(true)}
-            className="relative p-2 hover:bg-white/5 rounded-xl transition-colors"
+            className="relative p-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-xl transition-colors"
           >
             <Bell size={22} className="text-text-secondary" />
-            <div className="absolute top-2.5 right-2.5 w-2.5 h-2.5 bg-critical rounded-full border-2 border-dark-primary animate-pulse" />
+            <div className="absolute top-2.5 right-2.5 w-2.5 h-2.5 bg-critical rounded-full border-2 border-surface-main animate-pulse" />
           </button>
           <Link to="/profile" className="p-2 hover:bg-white/5 rounded-xl transition-colors">
             <Settings size={22} className="text-text-secondary" />
@@ -191,7 +207,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
       </main>
 
       {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 h-20 bg-dark-primary/90 backdrop-blur-xl border-t border-white/5 flex items-center justify-around px-2 z-[60]">
+      <nav className="fixed bottom-0 left-0 right-0 h-20 bg-surface-main/90 backdrop-blur-xl border-t border-border-main flex items-center justify-around px-2 z-[60]">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
           return (
@@ -200,7 +216,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
               to={item.path}
               className={cn(
                 "flex flex-col items-center justify-center gap-1 min-w-[64px] transition-all duration-300",
-                isActive ? "text-primary" : "text-text-secondary hover:text-white"
+                isActive ? "text-primary" : "text-text-secondary hover:text-text-primary"
               )}
             >
               <div className={cn(

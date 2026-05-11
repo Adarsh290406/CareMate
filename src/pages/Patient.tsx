@@ -199,7 +199,7 @@ export default function Patient() {
 
   return (
     <div className={cn(
-      "min-h-screen bg-background text-text-primary flex flex-col font-sans overflow-hidden transition-all duration-300",
+      "min-h-screen bg-bg-main text-text-primary flex flex-col font-sans overflow-hidden transition-all duration-300",
       elderlyMode ? "text-2xl" : "text-base"
     )}>
       {/* Emergency SOS Overlay */}
@@ -238,20 +238,20 @@ export default function Patient() {
       </AnimatePresence>
 
       {/* Top Navigation Bar */}
-      <header className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-surface">
+      <header className="flex items-center justify-between px-6 py-4 border-b border-border-main bg-surface-main">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-primary-accent rounded-lg flex items-center justify-center text-white shadow-lg shadow-primary-accent/20">
+          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-black shadow-lg shadow-primary/20">
             <Activity size={18} />
           </div>
-          <h1 className="text-xl font-bold tracking-tighter text-white">
-            CareMate <span className="text-primary-accent font-mono text-[10px] ml-2 tracking-widest uppercase">v1.2</span>
+          <h1 className="text-xl font-bold tracking-tighter text-text-primary">
+            CareMate <span className="text-primary font-mono text-[10px] ml-2 tracking-widest uppercase">v1.2</span>
           </h1>
         </div>
         
         <div className="flex items-center gap-4 sm:gap-8">
           <button 
             onClick={() => window.print()}
-            className="p-2 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-all text-text-muted"
+            className="p-2 bg-bg-main border border-border-main rounded-xl hover:bg-surface-main transition-all text-text-secondary"
             title="Export Health Report"
           >
             <ExternalLink size={20} />
@@ -269,27 +269,27 @@ export default function Patient() {
             </button>
               <button 
                 onClick={() => setElderlyMode(!elderlyMode)}
-                className="p-2 bg-white/5 rounded-lg border border-white/5 hover:border-primary-accent/50 transition-colors"
+                className="p-2 bg-bg-main rounded-lg border border-border-main hover:border-primary/50 transition-colors"
                 title={t("elderly_mode", language)}
               >
-                {elderlyMode ? <Sun size={18} /> : <Moon size={18} />}
+                {elderlyMode ? <Sun size={18} className="text-text-primary" /> : <Moon size={18} className="text-text-primary" />}
               </button>
             <button 
               onClick={toggleLanguage}
-              className="px-3 py-1 bg-white/5 rounded-lg border border-white/5 hover:border-primary-accent/50 transition-colors text-[10px] font-black uppercase tracking-widest"
+              className="px-3 py-1 bg-bg-main rounded-lg border border-border-main hover:border-primary/50 transition-colors text-[10px] font-black uppercase tracking-widest text-text-primary"
             >
               {language}
             </button>
             <button 
               onClick={() => setIsSettingsOpen(true)}
-              className="p-2 bg-white/5 rounded-lg border border-white/5 hover:border-primary-accent/50 transition-colors"
+              className="p-2 bg-bg-main rounded-lg border border-border-main hover:border-primary/50 transition-colors text-text-primary"
               title={t("reminder_settings", language)}
             >
               <Settings size={18} />
             </button>
             <button 
               onClick={handleSignOut}
-              className="p-2 bg-white/5 rounded-lg border border-white/5 hover:border-danger/50 transition-colors group"
+              className="p-2 bg-bg-main rounded-lg border border-border-main hover:border-danger/50 transition-colors group text-text-primary"
             >
               <LogOut size={18} className="group-hover:text-danger" />
             </button>
@@ -314,10 +314,10 @@ export default function Patient() {
                   <AlertTriangle size={18} />
                 </div>
                 <p className="text-xs text-warning font-medium">
-                  <span className="font-bold">Refill Alert:</span> {lowMedications[0].name} supply is low ({lowMedications[0].pillsRemaining} doses remaining).
+                  <span className="font-bold text-text-primary">Refill Alert:</span> {lowMedications[0].name} supply is low ({lowMedications[0].pillsRemaining} doses remaining).
                   <button 
                     onClick={() => handleRefillOrder(lowMedications[0].name)}
-                    className="underline underline-offset-4 ml-2 hover:text-white transition-colors"
+                    className="underline underline-offset-4 ml-2 hover:text-text-primary transition-colors"
                   >
                     Order Refill
                   </button>
@@ -327,9 +327,9 @@ export default function Patient() {
           </AnimatePresence>
 
           <div className="flex items-center justify-between mb-2">
-            <h2 className="text-lg font-bold flex items-center gap-2 tracking-tight uppercase tracking-widest text-white/90">
+            <h2 className="text-lg font-bold flex items-center gap-2 tracking-tight uppercase tracking-widest text-text-primary">
               {view === "clinical" ? (
-                <><Clock className="w-5 h-5 text-primary-accent" /> {t("todays_schedule", language)}</>
+                <><Clock className="w-5 h-5 text-primary" /> {t("todays_schedule", language)}</>
               ) : (
                 <><Activity className="w-5 h-5 text-success" /> {t("adherence_history", language)}</>
               )}
@@ -339,20 +339,20 @@ export default function Patient() {
                 <div className="flex items-center gap-2">
                   <button 
                     onClick={() => setIsAddModalOpen(true)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 bg-primary-accent/10 hover:bg-primary-accent/20 border border-primary-accent/20 rounded-lg text-[10px] font-black uppercase tracking-widest text-primary-accent transition-all"
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 hover:bg-primary/20 border border-primary/20 rounded-lg text-[10px] font-black uppercase tracking-widest text-primary transition-all"
                   >
                     <Plus size={14} /> {t("add_med", language)}
                   </button>
                   <button 
                     onClick={handlePrescriptionUpload}
                     disabled={isScanning}
-                    className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-[10px] font-black uppercase tracking-widest text-text-muted transition-all"
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-bg-main hover:bg-surface-main border border-border-main rounded-lg text-[10px] font-black uppercase tracking-widest text-text-secondary transition-all"
                   >
                     <Plus size={14} /> {isScanning ? "Scanning..." : t("scan_rx", language)}
                   </button>
                 </div>
               )}
-              <span className="text-[10px] text-text-muted uppercase tracking-[0.2em] font-black">
+              <span className="text-[10px] text-text-secondary uppercase tracking-[0.2em] font-black">
                 {view === "clinical" 
                   ? `${doses.filter(d => d.status === "pending").length} ${t("doses_remaining", language)}` 
                   : t("full_registry", language)}
@@ -367,17 +367,17 @@ export default function Patient() {
               </div>
             ) : view === "clinical" ? (
               doses.length === 0 ? (
-                <div className="dense-card p-12 text-center flex flex-col items-center gap-4">
-                  <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center text-text-muted mb-2">
+                <div className="dense-card p-12 text-center flex flex-col items-center gap-4 bg-surface-main border border-border-main rounded-3xl">
+                  <div className="w-16 h-16 bg-bg-main rounded-full flex items-center justify-center text-text-secondary mb-2">
                     <Clock size={32} />
                   </div>
                   <div>
                     <p className="text-text-primary text-lg font-bold">{t("no_doses", language)}</p>
-                    <p className="text-text-muted text-sm italic max-w-xs mx-auto">{t("no_doses_desc", language)}</p>
+                    <p className="text-text-secondary text-sm italic max-w-xs mx-auto opacity-70">{t("no_doses_desc", language)}</p>
                   </div>
                   <button 
                     onClick={seedDemoData}
-                    className="mt-4 px-6 py-3 bg-primary-accent text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:brightness-110 transition-all shadow-xl shadow-primary-accent/20"
+                    className="mt-4 px-6 py-3 bg-primary text-black rounded-xl font-bold text-xs uppercase tracking-widest hover:brightness-110 transition-all shadow-xl shadow-primary/20"
                   >
                     🚀 {t("seed_demo", language)}
                   </button>
@@ -398,8 +398,8 @@ export default function Patient() {
                         dose.status === "taken" ? "bg-success" : "bg-danger"
                       )} />
                       <div>
-                        <h4 className="font-bold text-white">{dose.medName}</h4>
-                        <p className="text-xs text-text-muted">{dose.scheduledAt.toDate().toLocaleDateString()} @ {dose.scheduledAt.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                        <h4 className="font-bold text-text-primary">{dose.medName}</h4>
+                        <p className="text-xs text-text-secondary">{dose.scheduledAt.toDate().toLocaleDateString()} @ {dose.scheduledAt.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                       </div>
                     </div>
                     <span className={cn(
@@ -419,10 +419,10 @@ export default function Patient() {
         <div className="flex-1 flex flex-col gap-6">
           
           {/* Adherence Risk Gauge */}
-          <div className="dense-card p-6 flex flex-col items-center">
+          <div className="dense-card p-6 flex flex-col items-center bg-surface-main border border-border-main rounded-3xl">
             <RiskMeter score={risk?.score || 12} />
-            <div className="text-center mt-4 border-t border-white/5 pt-4 w-full">
-              <p className="text-[11px] text-text-muted leading-relaxed">
+            <div className="text-center mt-4 border-t border-border-main pt-4 w-full">
+              <p className="text-[11px] text-text-secondary leading-relaxed">
                 Adherence streak is {risk?.score < 30 ? "98%" : "82%"} consistent. <br />
                 Trend: <span className="text-success font-black uppercase tracking-widest">{risk?.trend || "IMPROVING"}</span>
               </p>
@@ -430,20 +430,20 @@ export default function Patient() {
           </div>
 
           {/* AI Narrative Briefing */}
-          <div className="dense-card p-6 relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-4 opacity-10">
+          <div className="dense-card p-6 relative overflow-hidden bg-surface-main border border-border-main rounded-3xl">
+            <div className="absolute top-0 right-0 p-4 opacity-10 text-text-primary">
               <Brain size={48} />
             </div>
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-6 h-6 rounded-full bg-primary-accent flex items-center justify-center text-[8px] font-black text-white shadow-lg shadow-primary-accent/30">AI</div>
-              <h3 className="text-xs font-black uppercase tracking-widest text-white/80">{t("health_narrative", language)}</h3>
+              <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center text-[8px] font-black text-black shadow-lg shadow-primary/30">AI</div>
+              <h3 className="text-xs font-black uppercase tracking-widest text-text-primary opacity-80">{t("health_narrative", language)}</h3>
             </div>
-            <div className="space-y-4 text-xs sm:text-sm leading-relaxed text-text-muted font-medium">
+            <div className="space-y-4 text-xs sm:text-sm leading-relaxed text-text-secondary font-medium">
               <p>{briefing || t("fetching_briefing", language)}</p>
               <div className="pt-2">
                 <button 
                   onClick={() => window.print()}
-                  className="text-primary-accent font-bold flex items-center gap-1 hover:gap-2 transition-all"
+                  className="text-primary font-bold flex items-center gap-1 hover:gap-2 transition-all"
                 >
                   Export Weekly Health Report <ChevronRight size={14} />
                 </button>
@@ -476,7 +476,7 @@ export default function Patient() {
           onClick={() => setView("clinical")}
           className={cn(
             "flex flex-col items-center gap-1 transition-colors",
-            view === "clinical" ? "text-primary-accent" : "text-text-muted hover:text-white"
+            view === "clinical" ? "text-primary" : "text-text-secondary hover:text-text-primary"
           )}
         >
           <Activity size={22} />
@@ -486,7 +486,7 @@ export default function Patient() {
           onClick={() => setView("history")}
           className={cn(
             "flex flex-col items-center gap-1 transition-colors",
-            view === "history" ? "text-success" : "text-text-muted hover:text-white"
+            view === "history" ? "text-success" : "text-text-secondary hover:text-text-primary"
           )}
         >
           <Clock size={22} />
@@ -494,7 +494,7 @@ export default function Patient() {
         </button>
         <button 
           onClick={() => setIsChatOpen(true)}
-          className="flex flex-col items-center gap-1 text-text-muted hover:text-white transition-colors relative"
+          className="flex flex-col items-center gap-1 text-text-secondary hover:text-text-primary transition-colors relative"
         >
           <MessageCircle size={22} />
           <span className="text-[8px] font-black tracking-widest uppercase">{t("chat", language)}</span>
@@ -504,7 +504,7 @@ export default function Patient() {
           onClick={() => setIsNotifOpen(true)}
           className={cn(
             "flex flex-col items-center gap-1 transition-colors",
-            isNotifOpen ? "text-primary-accent" : "text-text-muted hover:text-white"
+            isNotifOpen ? "text-primary" : "text-text-secondary hover:text-text-primary"
           )}
         >
           <Bell size={22} />
@@ -527,42 +527,42 @@ export default function Patient() {
               initial={{ y: "100%" }}
               animate={{ y: 0 }}
               exit={{ y: "100%" }}
-              className="fixed bottom-0 left-0 right-0 z-[70] bg-surface rounded-t-[32px] p-8 max-h-[80vh] overflow-y-auto"
+              className="fixed bottom-0 left-0 right-0 z-[70] bg-surface-main rounded-t-[32px] p-8 max-h-[80vh] overflow-y-auto border-t border-border-main"
             >
-              <div className="w-12 h-1.5 bg-white/10 rounded-full mx-auto mb-8" />
+              <div className="w-12 h-1.5 bg-border-main rounded-full mx-auto mb-8" />
               <div className="flex items-center justify-between mb-8">
-                <h2 className="text-2xl font-bold tracking-tight">Smart Alerts</h2>
-                <div className="px-3 py-1 bg-primary-accent/10 rounded-full">
-                   <span className="text-[10px] font-black uppercase tracking-widest text-primary-accent">3 New</span>
+                <h2 className="text-2xl font-bold tracking-tight text-text-primary">Smart Alerts</h2>
+                <div className="px-3 py-1 bg-primary/10 rounded-full">
+                   <span className="text-[10px] font-black uppercase tracking-widest text-primary">3 New</span>
                 </div>
               </div>
 
               <div className="space-y-4">
-                <div className="p-4 bg-white/5 border border-white/5 rounded-2xl flex gap-4">
+                <div className="p-4 bg-bg-main border border-border-main rounded-2xl flex gap-4">
                    <div className="w-10 h-10 rounded-xl bg-danger/20 flex items-center justify-center text-danger shrink-0">
                       <AlertTriangle size={20} />
                    </div>
                    <div>
-                      <h4 className="font-bold text-white mb-1">Missed Dosage Warning</h4>
-                      <p className="text-sm text-text-muted">You missed your 8 AM Metformin. Health risk increased to 45%.</p>
+                      <h4 className="font-bold text-text-primary mb-1">Missed Dosage Warning</h4>
+                      <p className="text-sm text-text-secondary">You missed your 8 AM Metformin. Health risk increased to 45%.</p>
                       <span className="text-[9px] font-bold text-danger uppercase mt-2 block tracking-widest">Urgent</span>
                    </div>
                 </div>
-                <div className="p-4 bg-white/5 border border-white/5 rounded-2xl flex gap-4">
-                   <div className="w-10 h-10 rounded-xl bg-primary-accent/20 flex items-center justify-center text-primary-accent shrink-0">
+                <div className="p-4 bg-bg-main border border-border-main rounded-2xl flex gap-4">
+                   <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center text-primary shrink-0">
                       <MessageCircle size={20} />
                    </div>
                    <div>
-                      <h4 className="font-bold text-white mb-1">Nudge from Caregiver</h4>
-                      <p className="text-sm text-text-muted">"Don't forget your evening pill today! Love you." - Sarah</p>
-                      <span className="text-[9px] font-bold text-text-muted uppercase mt-2 block tracking-widest">2h ago</span>
+                      <h4 className="font-bold text-text-primary mb-1">Nudge from Caregiver</h4>
+                      <p className="text-sm text-text-secondary">"Don't forget your evening pill today! Love you." - Sarah</p>
+                      <span className="text-[9px] font-bold text-text-secondary uppercase mt-2 block tracking-widest opacity-60">2h ago</span>
                    </div>
                 </div>
               </div>
 
               <button 
                 onClick={() => setIsNotifOpen(false)}
-                className="w-full mt-8 p-4 bg-white/5 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-colors"
+                className="w-full mt-8 p-4 bg-bg-main border border-border-main rounded-2xl text-[10px] font-black uppercase tracking-widest text-text-secondary hover:text-text-primary transition-colors"
               >
                 Close Drawer
               </button>

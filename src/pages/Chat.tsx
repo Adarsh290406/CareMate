@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { Send, Mic, Sparkles, ChevronRight, Paperclip, MoreHorizontal } from "lucide-react";
 import { cn } from "../lib/utils";
 
-import { chatWithAI } from "../lib/gemini";
+import { chatWithAI, analyzePrescription } from "../lib/gemini";
 
 interface Message {
   id: string;
@@ -16,7 +16,9 @@ export default function Chat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const welcomeMessages: Message[] = [
     { id: '1', text: "Welcome to CareMate AI. I'm here to help with your medications and recovery.", sender: "ai", timestamp: new Date() },
@@ -29,6 +31,55 @@ export default function Chat() {
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
+
+  const handleVoiceInput = () => {
+    if (!('webkitSpeechRecognition' in window) && !('speechRecognition' in window)) {
+      alert("Speech recognition not supported in this browser.");
+      return;
+    }
+    
+    const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).speechRecognition;
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'en-US';
+    recognition.interimResults = false;
+    
+    recognition.onstart = () => setIsRecording(true);
+    recognition.onend = () => setIsRecording(false);
+    recognition.onresult = (event: any) => {
+      const transcript = event.results[0][0].transcript;
+      setInput(transcript);
+    };
+    
+    recognition.start();
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      const base64 = event.target?.result as string;
+      const userMsg: Message = { id: Date.now().toString(), text: "Shared an image for analysis...", sender: "user", timestamp: new Date() };
+      setMessages(prev => [...prev, userMsg]);
+      setIsTyping(true);
+      
+      try {
+        const result = await analyzePrescription(base64);
+        const text = result.medications?.length 
+          ? `I've analyzed the prescription. Found: ${result.medications.map((m: any) => m.name).join(", ")}.`
+          : "I couldn't detect any clear medication names in this image.";
+          
+        const aiMsg: Message = { id: (Date.now() + 1).toString(), text, sender: "ai", timestamp: new Date() };
+        setMessages(prev => [...prev, aiMsg]);
+      } catch (err) {
+        console.error("OCR error:", err);
+      } finally {
+        setIsTyping(false);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
 
   const sendMessage = async () => {
     if (!input.trim()) return;
@@ -123,7 +174,17 @@ export default function Chat() {
         </div>
 
         <div className="card bg-[var(--surface)] p-2 flex items-center gap-2 border-[var(--border)]">
-          <button className="p-2 text-[var(--text-secondary)] hover:text-primary transition-colors">
+          <input 
+            type="file" 
+            ref={fileInputRef} 
+            className="hidden" 
+            accept="image/*" 
+            onChange={handleFileUpload} 
+          />
+          <button 
+            onClick={() => fileInputRef.current?.click()}
+            className="p-2 text-[var(--text-secondary)] hover:text-primary transition-colors"
+          >
             <Paperclip size={20} />
           </button>
           <input 
@@ -134,7 +195,13 @@ export default function Chat() {
             className="flex-1 bg-transparent py-2 text-[14px] focus:outline-none placeholder:text-[var(--text-secondary)]/50"
           />
           <div className="flex items-center gap-1">
-            <button className="p-2 text-[var(--text-secondary)]">
+            <button 
+              onClick={handleVoiceInput}
+              className={cn(
+                "p-2 transition-colors",
+                isRecording ? "text-danger animate-pulse" : "text-[var(--text-secondary)] hover:text-primary"
+              )}
+            >
               <Mic size={20} />
             </button>
             <button 

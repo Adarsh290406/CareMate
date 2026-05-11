@@ -112,7 +112,7 @@ export default function Profile() {
             const settingsEl = document.getElementById('main-settings');
             settingsEl?.scrollIntoView({ behavior: 'smooth' });
           }}
-          className="p-2 bg-[var(--surface)] border border-[var(--border)] rounded-xl text-[var(--text-secondary)] hover:text-primary transition-colors active:scale-95"
+          className="p-2 bg-surface-main border border-border-main rounded-xl text-text-secondary hover:text-text-primary transition-colors active:scale-95 shadow-sm"
         >
           <Settings size={18} />
         </button>
@@ -139,10 +139,10 @@ export default function Profile() {
       {/* Stats Row */}
       <section className="grid grid-cols-3 gap-3">
         {stats.map((stat) => (
-          <div key={stat.label} className="card p-4 text-center flex flex-col items-center gap-1">
+          <div key={stat.label} className="card p-4 text-center flex flex-col items-center gap-1 bg-surface-main border border-border-main rounded-2xl">
             <stat.icon size={16} className={stat.color} />
-            <span className="mono text-xl tracking-tighter">{stat.value}</span>
-            <span className="text-[9px] font-black uppercase tracking-widest text-[var(--text-secondary)]">{stat.label}</span>
+            <span className="mono text-xl tracking-tighter text-text-primary">{stat.value}</span>
+            <span className="text-[9px] font-black uppercase tracking-widest text-text-secondary">{stat.label}</span>
           </div>
         ))}
       </section>
@@ -150,8 +150,8 @@ export default function Profile() {
       <section id="main-settings" className="space-y-8">
         {sections.map((section) => (
           <div key={section.title} className="space-y-4">
-            <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-[var(--text-secondary)] px-1">{section.title}</h3>
-            <div className="card divide-y divide-[var(--border)]">
+            <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-text-secondary px-1">{section.title}</h3>
+            <div className="card divide-y divide-border-main bg-surface-main border border-border-main rounded-3xl overflow-hidden shadow-sm">
               {section.items.map((item) => (
                 <div 
                   key={item.label} 
@@ -159,8 +159,8 @@ export default function Profile() {
                   className="p-5 flex items-center justify-between group cursor-pointer hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors"
                 >
                   <div className="flex items-center gap-4">
-                    {item.icon && <item.icon size={18} className="text-[var(--text-secondary)]" />}
-                    <span className="text-[14px] font-semibold">{item.label}</span>
+                    {item.icon && <item.icon size={18} className="text-text-secondary" />}
+                    <span className="text-[14px] font-semibold text-text-primary">{item.label}</span>
                   </div>
                   {item.type === 'toggle' ? (
                     <button 
@@ -170,7 +170,7 @@ export default function Profile() {
                       }}
                       className={cn(
                         "w-12 h-7 rounded-full transition-all duration-300 p-1 flex items-center",
-                        item.active ? "bg-primary" : "bg-zinc-200 dark:bg-zinc-700"
+                        item.active ? "bg-primary" : "bg-bg-main border border-border-main"
                       )}
                     >
                       <motion.div 
@@ -181,8 +181,8 @@ export default function Profile() {
                     </button>
                   ) : (
                     <div className="flex items-center gap-2">
-                       {item.badge && <span className="text-[10px] font-black text-primary uppercase tracking-widest px-2 py-0.5 bg-primary/5 rounded-full">{item.badge}</span>}
-                       <ChevronRight size={16} className="text-[var(--border)] group-hover:text-primary transition-colors" />
+                       {item.badge && <span className="text-[10px] font-black text-primary uppercase tracking-widest px-2 py-0.5 bg-primary/10 rounded-full">{item.badge}</span>}
+                       <ChevronRight size={16} className="text-border-main group-hover:text-primary transition-colors" />
                     </div>
                   )}
                 </div>
@@ -196,18 +196,18 @@ export default function Profile() {
            {/* Dark Mode */}
            <div 
              onClick={() => setDarkMode(!darkMode)}
-             className="card p-5 flex items-center justify-between cursor-pointer active:scale-[0.99] transition-transform"
+             className="card p-5 flex items-center justify-between cursor-pointer active:scale-[0.99] transition-transform bg-surface-main border border-border-main rounded-3xl"
            >
               <div className="flex items-center gap-4">
-                {darkMode ? <Moon size={18} className="text-ai" /> : <Sun size={18} className="text-warning" />}
+                {darkMode ? <Moon size={18} className="text-primary" /> : <Sun size={18} className="text-warning" />}
                 <div>
-                  <p className="text-[14px] font-semibold">Dark Mode</p>
-                  <p className="text-[10px] text-[var(--text-secondary)] uppercase font-black tracking-widest">{darkMode ? "Eye protection active" : "Classic interface"}</p>
+                  <p className="text-[14px] font-semibold text-text-primary">Dark Mode</p>
+                  <p className="text-[10px] text-text-secondary uppercase font-black tracking-widest">{darkMode ? "Eye protection active" : "Classic interface"}</p>
                 </div>
               </div>
               <div className={cn(
                 "w-12 h-7 rounded-full p-1 transition-all duration-300 flex items-center",
-                darkMode ? "bg-ai" : "bg-zinc-200"
+                darkMode ? "bg-primary" : "bg-bg-main border border-border-main"
               )}>
                 <motion.div 
                    layout
@@ -233,16 +233,16 @@ export default function Profile() {
                    tag: "test-notification"
                 });
              }}
-             className="w-full card border-primary/20 bg-primary/5 p-5 flex items-center justify-between group active:scale-[0.99] transition-transform"
+             className="w-full card border-primary/20 bg-primary/10 p-5 flex items-center justify-between group active:scale-[0.99] transition-transform rounded-3xl shadow-sm"
            >
               <div className="flex items-center gap-4 text-left">
                 <Zap size={18} className="text-primary" />
                 <div>
-                  <p className="text-[14px] font-semibold">Test Alert System</p>
-                  <p className="text-[10px] text-[var(--text-secondary)] uppercase font-black tracking-widest">Verify notifications are working</p>
+                  <p className="text-[14px] font-semibold text-text-primary">Test Alert System</p>
+                  <p className="text-[10px] text-text-secondary uppercase font-black tracking-widest opacity-60">Verify notifications are working</p>
                 </div>
               </div>
-              <div className="flex items-center gap-2 px-3 py-1 bg-primary text-white rounded-lg text-[10px] font-black uppercase tracking-widest">
+              <div className="flex items-center gap-2 px-3 py-1 bg-primary text-black rounded-lg text-[10px] font-black uppercase tracking-widest">
                 Test
               </div>
            </button>

@@ -74,16 +74,16 @@ export default function ChatModal({ isOpen, onClose, targetId, targetName }: Cha
             initial={{ x: 400, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: 400, opacity: 0 }}
-            className="w-full max-w-sm h-[600px] dense-card flex flex-col shadow-2xl pointer-events-auto overflow-hidden bg-surface border border-white/10"
+            className="w-full max-w-sm h-[600px] dense-card flex flex-col shadow-2xl pointer-events-auto overflow-hidden bg-surface-main border border-border-main"
           >
             {/* Header */}
-            <div className="p-4 bg-primary-accent text-white flex items-center justify-between">
+            <div className="p-4 bg-primary text-black flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-full bg-black/10 flex items-center justify-center">
                   <MessageSquare size={18} />
                 </div>
                 <div>
-                  <h3 className="font-bold tracking-tight">{targetName}</h3>
+                  <h3 className="font-bold tracking-tight text-black">{targetName}</h3>
                   <p className="text-[9px] font-black uppercase tracking-widest opacity-80 flex items-center gap-1">
                     <Shield size={10} /> Secure Clinical Node
                   </p>
@@ -92,19 +92,19 @@ export default function ChatModal({ isOpen, onClose, targetId, targetName }: Cha
               <div className="flex items-center gap-2">
                 <button 
                   onClick={() => window.open(`https://meet.jit.si/CareMate_${[user?.uid, targetId].sort().join("_")}`, '_blank')}
-                  className="p-2 hover:bg-white/10 rounded-full transition-colors text-white"
+                  className="p-2 hover:bg-black/10 rounded-full transition-colors"
                   title="Video Call"
                 >
                   <Video size={18} />
                 </button>
-                <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors">
+                <button onClick={onClose} className="p-2 hover:bg-black/10 rounded-full transition-colors">
                   <X size={20} />
                 </button>
               </div>
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar bg-background/50">
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar bg-bg-main/50">
               {!targetId ? (
                 <div className="flex flex-col items-center justify-center h-full text-center p-8 opacity-50">
                   <MessageSquare size={48} className="mb-4" />
@@ -126,12 +126,12 @@ export default function ChatModal({ isOpen, onClose, targetId, targetName }: Cha
                   <div className={cn(
                     "p-3 rounded-2xl text-sm font-medium leading-relaxed shadow-sm",
                     msg.senderId === user?.uid 
-                      ? "bg-primary-accent text-white rounded-tr-none" 
-                      : "bg-surface border border-white/5 text-white/90 rounded-tl-none"
+                      ? "bg-primary text-black rounded-tr-none" 
+                      : "bg-surface-main border border-border-main text-text-primary rounded-tl-none"
                   )}>
                     {msg.text}
                   </div>
-                  <span className="text-[8px] text-text-muted mt-1 uppercase font-bold tracking-widest">
+                  <span className="text-[8px] text-text-secondary mt-1 uppercase font-bold tracking-widest">
                     {msg.createdAt?.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </span>
                 </div>
@@ -140,16 +140,16 @@ export default function ChatModal({ isOpen, onClose, targetId, targetName }: Cha
             </div>
 
             {/* Input */}
-            <form onSubmit={sendMessage} className="p-4 bg-surface border-t border-white/5 flex gap-2">
+            <form onSubmit={sendMessage} className="p-4 bg-surface-main border-t border-border-main flex gap-2">
               <input 
                 value={newMessage}
                 onChange={e => setNewMessage(e.target.value)}
                 placeholder="Type a message..."
-                className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-primary-accent/50"
+                className="flex-1 bg-bg-main border border-border-main rounded-xl px-4 py-2 text-sm text-text-primary focus:outline-none focus:border-primary/50"
               />
               <button 
                 type="submit"
-                className="p-2 bg-primary-accent text-white rounded-xl hover:brightness-110 transition-all shadow-lg shadow-primary-accent/20"
+                className="p-2 bg-primary text-black rounded-xl hover:brightness-110 transition-all shadow-lg shadow-primary/20"
               >
                 <Send size={18} />
               </button>

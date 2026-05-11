@@ -14,12 +14,13 @@
   --color-safe: #2ECC71;
   --color-info: #FFD93D;
   
-  --color-dark-primary: #0A0E1A;
-  --color-dark-secondary: #111827;
-  --color-dark-elevated: #1A2235;
-  
-  --color-text-primary: #F0F4FF;
-  --color-text-secondary: #8B9BBE;
+  /* Theme-aware semantic colors */
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-bg-main: var(--bg);
+  --color-surface-main: var(--surface);
+  --color-border-main: var(--border);
+  --color-card-bg: var(--card-bg);
 
   @keyframes float {
     0%, 100% { transform: translateY(0px); }
@@ -36,9 +37,19 @@
 
 @layer base {
   :root {
+    --bg: #F8FAFC;
+    --surface: #FFFFFF;
+    --card-bg: #FFFFFF;
+    --border: rgba(15, 23, 42, 0.08);
+    --text-primary: #0F172A;
+    --text-secondary: #64748B;
+  }
+
+  :root[data-theme='dark'] {
     --bg: #0A0E1A;
     --surface: #111827;
-    --border: rgba(255,255,255,0.08);
+    --card-bg: #1A2235;
+    --border: rgba(255, 255, 255, 0.08);
     --text-primary: #F0F4FF;
     --text-secondary: #8B9BBE;
   }
@@ -50,21 +61,25 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-display tracking-tight;
+    @apply font-display tracking-tight text-text-primary;
   }
 }
 
 @layer components {
   .glass {
-    @apply bg-white/5 backdrop-blur-md border border-white/10;
+    @apply bg-bg-main/70 backdrop-blur-md border border-border-main;
   }
   
-  .glass-dark {
-    @apply bg-black/40 backdrop-blur-xl border border-white/5;
+  .glass-elevated {
+    @apply bg-surface-main/80 backdrop-blur-xl border border-border-main shadow-xl;
+  }
+
+  .card {
+    @apply bg-card-bg border border-border-main rounded-[24px] transition-all duration-300;
   }
 
   .btn-gradient {
-    @apply bg-gradient-to-r from-[#00D4AA] to-[#00A884] text-black font-black uppercase tracking-widest transition-all hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(0,212,170,0.4)] active:scale-[0.98];
+    @apply bg-gradient-to-r from-[#00D4AA] to-[#00A884] text-white font-black uppercase tracking-widest transition-all hover:scale-[1.02] hover:shadow-[0_0_20px_rgba(0,212,170,0.4)] active:scale-[0.98];
   }
 
   .floating {

@@ -22,7 +22,7 @@ const MedRow = ({ med, color }: MedRowProps) => {
   const [swiped, setSwiped] = useState(false);
 
   return (
-    <div className="relative overflow-hidden rounded-3xl bg-surface mb-3 group">
+    <div className="relative overflow-hidden rounded-3xl bg-surface-main mb-3 group">
       {/* Swipe Actions */}
       <div className="absolute inset-0 flex items-center justify-end px-6 gap-6 bg-danger/10">
         <div className="flex flex-col items-center gap-1 text-danger">
@@ -35,7 +35,7 @@ const MedRow = ({ med, color }: MedRowProps) => {
         drag="x"
         dragConstraints={{ right: 0, left: -100 }}
         style={{ x }}
-        className="relative z-10 card p-5 flex flex-col gap-4 border-none bg-surface"
+        className="relative z-10 card p-5 flex flex-col gap-4 border-none bg-surface-main"
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -43,10 +43,10 @@ const MedRow = ({ med, color }: MedRowProps) => {
               <Activity size={24} />
             </div>
             <div>
-              <h3 className="font-bold text-lg tracking-tight leading-none mb-1">{med.name}</h3>
+              <h3 className="font-bold text-lg tracking-tight leading-none mb-1 text-text-primary">{med.name}</h3>
               <div className="flex items-center gap-2">
-                <span className="text-xs text-[var(--text-secondary)] font-medium">{med.dosage}</span>
-                <div className="w-1 h-1 rounded-full bg-border" />
+                <span className="text-xs text-text-secondary font-medium">{med.dosage}</span>
+                <div className="w-1 h-1 rounded-full bg-border-main" />
                 <span className="text-[10px] text-primary font-black uppercase tracking-widest">Active</span>
               </div>
             </div>
@@ -57,14 +57,14 @@ const MedRow = ({ med, color }: MedRowProps) => {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 pt-2 border-t border-border/50">
+        <div className="grid grid-cols-2 gap-3 pt-2 border-t border-border-main/50">
           <div className="flex flex-col gap-1">
-             <span className="text-[9px] font-black uppercase tracking-widest opacity-40">Generic Name</span>
-             <span className="text-xs font-bold truncate">Lisinopril-HCTZ</span>
+             <span className="text-[9px] font-black uppercase tracking-widest opacity-40 text-text-secondary">Generic Name</span>
+             <span className="text-xs font-bold truncate text-text-primary">Lisinopril-HCTZ</span>
           </div>
           <div className="flex flex-col gap-1">
-             <span className="text-[9px] font-black uppercase tracking-widest opacity-40">Frequency</span>
-             <span className="text-xs font-bold">{med.frequency || "Once Daily"}</span>
+             <span className="text-[9px] font-black uppercase tracking-widest opacity-40 text-text-secondary">Frequency</span>
+             <span className="text-xs font-bold text-text-primary">{med.frequency || "Once Daily"}</span>
           </div>
         </div>
 
@@ -108,8 +108,8 @@ export default function Meds() {
       <header className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-black italic tracking-tighter uppercase leading-none">Pharmacy</h1>
-            <p className="text-[10px] font-black uppercase tracking-widest text-[var(--text-secondary)] mt-1">{medications.length} Medications Registered</p>
+            <h1 className="text-3xl font-black italic tracking-tighter uppercase leading-none text-text-primary">Pharmacy</h1>
+            <p className="text-[10px] font-black uppercase tracking-widest text-text-secondary mt-1">{medications.length} Medications Registered</p>
           </div>
           <button 
             onClick={() => setIsCheckerOpen(true)}
@@ -120,12 +120,12 @@ export default function Meds() {
           </button>
         </div>
 
-        <div className="flex gap-2 p-1.5 bg-surface border border-border rounded-2xl">
+        <div className="flex gap-2 p-1.5 bg-surface-main border border-border-main rounded-2xl">
           <button 
             onClick={() => setActiveTab("active")}
             className={cn(
               "flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2",
-              activeTab === "active" ? "bg-primary text-white shadow-lg shadow-primary/20" : "text-text-muted hover:text-white"
+              activeTab === "active" ? "bg-primary text-white shadow-lg shadow-primary/20" : "text-text-secondary hover:text-text-primary"
             )}
           >
             <Play size={14} fill={activeTab === "active" ? "currentColor" : "none"} /> Active
@@ -134,7 +134,7 @@ export default function Meds() {
             onClick={() => setActiveTab("paused")}
             className={cn(
               "flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2",
-              activeTab === "paused" ? "bg-surface-accent text-white shadow-lg" : "text-text-muted hover:text-white"
+              activeTab === "paused" ? "bg-bg-main text-text-primary shadow-lg" : "text-text-secondary hover:text-text-primary"
             )}
           >
             <Pause size={14} fill={activeTab === "paused" ? "currentColor" : "none"} /> Paused
@@ -142,13 +142,13 @@ export default function Meds() {
         </div>
 
         <div className="relative">
-          <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted" />
+          <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary opacity-60" />
           <input 
             type="text"
             placeholder="Search medications..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            className="w-full h-14 bg-surface border border-border rounded-2xl pl-12 pr-4 text-sm font-medium focus:outline-none focus:border-primary/50 transition-all"
+            className="w-full h-14 bg-surface-main border border-border-main rounded-2xl pl-12 pr-4 text-sm font-medium text-text-primary focus:outline-none focus:border-primary/50 transition-all"
           />
         </div>
       </header>
