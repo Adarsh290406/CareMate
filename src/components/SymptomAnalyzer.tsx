@@ -108,7 +108,7 @@ export default function SymptomAnalyzer({ medications }: SymptomAnalyzerProps) {
                           {result.related ? "Potential Medication Link" : "No Direct Link Found"}
                         </span>
                       </div>
-                      <p className="text-sm font-medium leading-relaxed">{result.explanation}</p>
+                      <p className="text-sm font-medium leading-relaxed">{typeof result.explanation === 'string' ? result.explanation : "Analysis complete. See details below."}</p>
                     </div>
 
                     {result.relatedMedications?.length > 0 && (

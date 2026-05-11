@@ -198,13 +198,21 @@ export async function generateDoctorReport(profile: any, medications: any[], dos
  * Simulate Missed Dose Impact
  */
 export async function simulateMissedDose(medName: string): Promise<any> {
-  const prompt = `Simulate impact of missing one dose of ${medName}. Return ONLY JSON.`;
+  const prompt = `Simulate the impact of missing one dose of "${medName}".
+  Return ONLY JSON with these exact keys:
+  {
+    "severity": "Low" | "Medium" | "High",
+    "impact": "1-sentence explanation of what happens in the body",
+    "recoveryAction": "Short instruction (e.g., Take as soon as remembered, skip if near next dose)",
+    "efficacyDrop": <number between 0-100>,
+    "safetyWindow": <number of hours>
+  }`;
   const res = await callAi("You are a medical simulation engine.", prompt);
   try {
     const jsonStr = res.text.match(/\{[\s\S]*\}/)?.[0];
     return JSON.parse(jsonStr || "{}");
   } catch (e) {
-    return { severity: "Low", impact: "Simulation offline." };
+    return { severity: "Low", impact: "Simulation offline.", recoveryAction: "Consult your pharmacist.", efficacyDrop: 0, safetyWindow: 0 };
   }
 }
 

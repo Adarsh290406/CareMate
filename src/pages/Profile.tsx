@@ -3,6 +3,7 @@ import { motion } from "motion/react";
 import { User, LogOut, Bell, Shield, Heart, FileText, Moon, Sun, Settings, Edit3, ChevronRight, TrendingUp, Award, Zap, Clock, Book, Brain, Activity, Camera, Users } from "lucide-react";
 import { cn } from "../lib/utils";
 import { useAuth } from "../hooks/useAuth";
+import { useMedications } from "../hooks/useMedications";
 import { auth } from "../lib/firebase";
 import { useNavigate } from "react-router-dom";
 
@@ -52,6 +53,8 @@ export default function Profile() {
     }
   }, [darkMode]);
 
+  const { medications } = useMedications(profile?.uid || auth.currentUser?.uid);
+
   const stats = [
     { label: "Total Doses", value: "482", icon: Zap, color: "text-primary" },
     { label: "Best Streak", value: "28d", icon: Award, color: "text-orange-500" },
@@ -62,7 +65,7 @@ export default function Profile() {
     {
       title: "Medication Settings",
       items: [
-        { label: "My Prescription List", icon: FileText, badge: "5 Active" },
+        { label: "My Prescription List", icon: FileText, badge: `${medications.length} Active`, path: "/meds" },
         { label: "Check Drug Interactions", icon: Zap, path: "/check-interaction" },
         { label: "Voice AI Assistant", icon: Brain, path: "/voice-assistant" },
         { label: "Med Encyclopedia", icon: Book, path: "/encyclopedia" },
