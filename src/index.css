@@ -14,6 +14,10 @@
   --color-safe: #2ECC71;
   --color-info: #FFD93D;
   
+  /* Onboarding specific dark colors */
+  --color-dark-primary: #0A0E1A;
+  --color-dark-elevated: #1A1C1E;
+  
   /* Theme-aware semantic colors */
   --color-text-primary: var(--text-primary);
   --color-text-secondary: var(--text-secondary);
@@ -72,6 +76,14 @@
   
   .glass-elevated {
     @apply bg-surface-main/80 backdrop-blur-xl border border-border-main shadow-xl;
+  }
+
+  .glass-dark {
+    @apply bg-[#1A1C1E]/80 backdrop-blur-xl border border-white/10 shadow-2xl;
+  }
+
+  .dark-primary {
+    @apply bg-[#0A0E1A];
   }
 
   .card {

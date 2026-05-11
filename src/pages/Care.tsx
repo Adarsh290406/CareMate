@@ -102,8 +102,8 @@ export default function Care() {
                     <p className="text-[9px] font-black uppercase tracking-widest text-text-secondary">{member.role}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-success">
-                  <div className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
+                <div className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-safe">
+                  <div className="w-1.5 h-1.5 rounded-full bg-safe animate-pulse" />
                   {member.status}
                 </div>
              </div>

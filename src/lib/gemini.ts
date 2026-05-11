@@ -38,6 +38,8 @@ export async function analyzePrescription(base64Image: string): Promise<any> {
   }
 }
 
+export const readPrescription = analyzePrescription;
+
 /**
  * Generic AI caller (Proxied to backend)
  */

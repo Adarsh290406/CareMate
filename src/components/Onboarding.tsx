@@ -183,23 +183,23 @@ export default function Onboarding({ uid, role, onComplete }: OnboardingProps) {
     <div className="space-y-6">
       <div className="flex flex-col items-center gap-4 mb-6">
         <div className="relative group">
-          <div className="w-24 h-24 rounded-full bg-dark-elevated border-2 border-dashed border-white/20 flex items-center justify-center overflow-hidden group-hover:border-primary transition-colors">
+          <div className="w-24 h-24 rounded-full bg-surface-main border border-border-main flex items-center justify-center overflow-hidden group-hover:border-primary transition-colors">
             {formData.profilePhoto ? (
               <img src={formData.profilePhoto} alt="Profile" className="w-full h-full object-cover" />
             ) : (
-              <Camera size={32} className="text-white/20 group-hover:text-primary transition-colors" />
+              <Camera size={32} className="text-text-secondary opacity-40 group-hover:text-primary transition-colors" />
             )}
           </div>
           <button className="absolute bottom-0 right-0 p-2 bg-primary text-black rounded-full shadow-lg">
             <Plus size={16} />
           </button>
         </div>
-        <p className="text-[10px] font-black uppercase tracking-widest text-white/40">Upload Profile Photo</p>
+        <p className="text-[10px] font-black uppercase tracking-widest text-text-secondary">Upload Profile Photo</p>
       </div>
 
       <div className="space-y-4">
         <div className="space-y-2">
-          <label className="text-[10px] font-black uppercase tracking-widest text-white/40 ml-1">Preferred Language</label>
+          <label className="text-[10px] font-black uppercase tracking-widest text-text-secondary ml-1">Preferred Language</label>
           <div className="grid grid-cols-2 gap-3">
             {LANGUAGES.map(lang => (
               <button 
@@ -207,7 +207,7 @@ export default function Onboarding({ uid, role, onComplete }: OnboardingProps) {
                 onClick={() => setFormData({...formData, language: lang.code})}
                 className={cn(
                   "py-4 rounded-2xl font-bold flex items-center justify-center gap-2 border-2 transition-all",
-                  formData.language === lang.code ? "bg-primary/10 border-primary text-primary" : "bg-white/5 border-white/10 text-white/60 hover:text-white"
+                  formData.language === lang.code ? "bg-primary/10 border-primary text-primary" : "bg-bg-main border border-border-main text-text-secondary opacity-60 hover:text-text-primary"
                 )}
               >
                 <span>{lang.flag}</span>
@@ -221,25 +221,25 @@ export default function Onboarding({ uid, role, onComplete }: OnboardingProps) {
           <>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-white/40 ml-1">Date of Birth</label>
+                <label className="text-[10px] font-black uppercase tracking-widest text-text-secondary ml-1">Date of Birth</label>
                 <input 
                   type="date"
                   value={formData.dob}
                   onChange={e => setFormData({...formData, dob: e.target.value})}
-                  className="w-full h-14 bg-white/5 border border-white/10 rounded-xl px-4 text-sm font-bold text-white outline-none focus:border-primary transition-all [color-scheme:dark]"
+                  className="w-full h-14 bg-bg-main border border-border-main rounded-xl px-4 text-sm font-bold text-text-primary outline-none focus:border-primary transition-all [color-scheme:dark]"
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-white/40 ml-1">Gender</label>
+                <label className="text-[10px] font-black uppercase tracking-widest text-text-secondary ml-1">Gender</label>
                 <select 
                   value={formData.gender}
                   onChange={e => setFormData({...formData, gender: e.target.value})}
-                  className="w-full h-14 bg-white/5 border border-white/10 rounded-xl px-4 text-sm font-bold text-white outline-none focus:border-primary transition-all appearance-none [&>option]:bg-[#1A1C1E] [&>option]:text-white"
+                  className="w-full h-14 bg-bg-main border border-border-main rounded-xl px-4 text-sm font-bold text-text-primary outline-none focus:border-primary transition-all appearance-none [&>option]:bg-surface-main [&>option]:text-text-primary"
                 >
-                  <option value="" className="bg-[#1A1C1E] text-white">Select</option>
-                  <option value="Male" className="bg-[#1A1C1E] text-white">Male</option>
-                  <option value="Female" className="bg-[#1A1C1E] text-white">Female</option>
-                  <option value="Other" className="bg-[#1A1C1E] text-white">Other</option>
+                  <option value="" className="bg-surface-main text-text-primary">Select</option>
+                  <option value="Male" className="bg-surface-main text-text-primary">Male</option>
+                  <option value="Female" className="bg-surface-main text-text-primary">Female</option>
+                  <option value="Other" className="bg-surface-main text-text-primary">Other</option>
                 </select>
               </div>
             </div>
@@ -255,7 +255,7 @@ export default function Onboarding({ uid, role, onComplete }: OnboardingProps) {
       case 2: return (
         <div className="space-y-6">
           <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-widest text-white/40 ml-1">Chronic Conditions</label>
+            <label className="text-[10px] font-black uppercase tracking-widest text-text-secondary ml-1">Chronic Conditions</label>
             <div className="grid grid-cols-2 gap-2">
               {['Diabetes', 'Hypertension', 'Heart Disease', 'Thyroid', 'Asthma', 'Kidney Disease', 'Cancer', 'None'].map(c => (
                 <button 
@@ -268,7 +268,7 @@ export default function Onboarding({ uid, role, onComplete }: OnboardingProps) {
                   }}
                   className={cn(
                     "py-3 px-4 rounded-xl text-xs font-bold transition-all border",
-                    formData.conditions.includes(c) ? "bg-primary/20 border-primary text-primary" : "bg-white/5 border-white/10 text-white/60 hover:text-white"
+                    formData.conditions.includes(c) ? "bg-primary/20 border-primary text-primary" : "bg-bg-main border border-border-main text-text-secondary opacity-60 hover:text-text-primary"
                   )}
                 >
                   {c}
@@ -278,25 +278,25 @@ export default function Onboarding({ uid, role, onComplete }: OnboardingProps) {
           </div>
           <div className="grid grid-cols-3 gap-4">
             <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-white/40 ml-1">Blood Group</label>
+              <label className="text-[10px] font-black uppercase tracking-widest text-text-secondary ml-1">Blood Group</label>
               <select 
                 value={formData.bloodGroup}
                 onChange={e => setFormData({...formData, bloodGroup: e.target.value})}
-                className="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-3 text-xs font-bold text-white outline-none [&>option]:bg-[#1A1C1E] [&>option]:text-white"
+                className="w-full h-12 bg-bg-main border border-border-main rounded-xl px-3 text-xs font-bold text-text-primary outline-none [&>option]:bg-surface-main [&>option]:text-text-primary"
               >
-                <option value="" className="bg-[#1A1C1E] text-white">-</option>
-                {['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'].map(bg => <option key={bg} value={bg} className="bg-[#1A1C1E] text-white">{bg}</option>)}
+                <option value="" className="bg-surface-main text-text-primary">-</option>
+                {['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'].map(bg => <option key={bg} value={bg} className="bg-surface-main text-text-primary">{bg}</option>)}
               </select>
             </div>
             <div className="space-y-2 col-span-2">
               <div className="grid grid-cols-2 gap-2">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-white/40 ml-1">Height (cm)</label>
-                  <input type="number" value={formData.height} onChange={e => setFormData({...formData, height: e.target.value})} className="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-3 text-xs font-bold text-white outline-none" />
+                  <label className="text-[10px] font-black uppercase tracking-widest text-text-secondary ml-1">Height (cm)</label>
+                  <input type="number" value={formData.height} onChange={e => setFormData({...formData, height: e.target.value})} className="w-full h-12 bg-bg-main border border-border-main rounded-xl px-3 text-xs font-bold text-text-primary outline-none" />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-white/40 ml-1">Weight (kg)</label>
-                  <input type="number" value={formData.weight} onChange={e => setFormData({...formData, weight: e.target.value})} className="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-3 text-xs font-bold text-white outline-none" />
+                  <label className="text-[10px] font-black uppercase tracking-widest text-text-secondary ml-1">Weight (kg)</label>
+                  <input type="number" value={formData.weight} onChange={e => setFormData({...formData, weight: e.target.value})} className="w-full h-12 bg-bg-main border border-border-main rounded-xl px-3 text-xs font-bold text-text-primary outline-none" />
                 </div>
               </div>
             </div>
@@ -305,20 +305,20 @@ export default function Onboarding({ uid, role, onComplete }: OnboardingProps) {
       );
       case 3: return (
         <div className="space-y-6">
-          <div className="space-y-4 p-4 bg-white/5 rounded-2xl border border-white/5">
+          <div className="space-y-4 p-4 bg-white/5 rounded-2xl border border-border-main">
             <h3 className="text-xs font-black uppercase tracking-widest text-primary">Emergency Contact 1</h3>
-            <input placeholder="Full Name" value={formData.emergencyContact1.name} onChange={e => setFormData({...formData, emergencyContact1: {...formData.emergencyContact1, name: e.target.value}})} className="w-full h-12 bg-dark-elevated border border-white/10 rounded-xl px-4 text-sm font-bold text-white outline-none" />
+            <input placeholder="Full Name" value={formData.emergencyContact1.name} onChange={e => setFormData({...formData, emergencyContact1: {...formData.emergencyContact1, name: e.target.value}})} className="w-full h-12 bg-surface-main border border-border-main rounded-xl px-4 text-sm font-bold text-text-primary outline-none" />
             <div className="grid grid-cols-2 gap-2">
-              <input placeholder="Relationship" value={formData.emergencyContact1.relationship} onChange={e => setFormData({...formData, emergencyContact1: {...formData.emergencyContact1, relationship: e.target.value}})} className="h-12 bg-dark-elevated border border-white/10 rounded-xl px-4 text-sm font-bold text-white outline-none" />
-              <input placeholder="Phone" value={formData.emergencyContact1.phone} onChange={e => setFormData({...formData, emergencyContact1: {...formData.emergencyContact1, phone: e.target.value}})} className="h-12 bg-dark-elevated border border-white/10 rounded-xl px-4 text-sm font-bold text-white outline-none" />
+              <input placeholder="Relationship" value={formData.emergencyContact1.relationship} onChange={e => setFormData({...formData, emergencyContact1: {...formData.emergencyContact1, relationship: e.target.value}})} className="h-12 bg-surface-main border border-border-main rounded-xl px-4 text-sm font-bold text-text-primary outline-none" />
+              <input placeholder="Phone" value={formData.emergencyContact1.phone} onChange={e => setFormData({...formData, emergencyContact1: {...formData.emergencyContact1, phone: e.target.value}})} className="h-12 bg-surface-main border border-border-main rounded-xl px-4 text-sm font-bold text-text-primary outline-none" />
             </div>
           </div>
           <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-widest text-white/40 ml-1">Home Address</label>
-            <input placeholder="Street Address" value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} className="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm font-bold text-white outline-none" />
+            <label className="text-[10px] font-black uppercase tracking-widest text-text-secondary ml-1">Home Address</label>
+            <input placeholder="Street Address" value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} className="w-full h-12 bg-bg-main border border-border-main rounded-xl px-4 text-sm font-bold text-text-primary outline-none" />
             <div className="grid grid-cols-2 gap-2">
-              <input placeholder="City" value={formData.city} onChange={e => setFormData({...formData, city: e.target.value})} className="h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm font-bold text-white outline-none" />
-              <input placeholder="Pin Code" value={formData.pinCode} onChange={e => setFormData({...formData, pinCode: e.target.value})} className="h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm font-bold text-white outline-none" />
+              <input placeholder="City" value={formData.city} onChange={e => setFormData({...formData, city: e.target.value})} className="h-12 bg-bg-main border border-border-main rounded-xl px-4 text-sm font-bold text-text-primary outline-none" />
+              <input placeholder="Pin Code" value={formData.pinCode} onChange={e => setFormData({...formData, pinCode: e.target.value})} className="h-12 bg-bg-main border border-border-main rounded-xl px-4 text-sm font-bold text-text-primary outline-none" />
             </div>
           </div>
         </div>
@@ -328,14 +328,14 @@ export default function Onboarding({ uid, role, onComplete }: OnboardingProps) {
           <div className="grid grid-cols-2 gap-4">
             {Object.entries(formData.lifestyle).filter(([key]) => key.includes('Time')).map(([key, value]) => (
               <div key={key} className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-white/40 ml-1">{key.replace('Time', '').toUpperCase()}</label>
-                <input type="time" value={value as string} onChange={e => setFormData({...formData, lifestyle: {...formData.lifestyle, [key]: e.target.value}})} className="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm font-bold text-white outline-none [color-scheme:dark]" />
+                <label className="text-[10px] font-black uppercase tracking-widest text-text-secondary ml-1">{key.replace('Time', '').toUpperCase()}</label>
+                <input type="time" value={value as string} onChange={e => setFormData({...formData, lifestyle: {...formData.lifestyle, [key]: e.target.value}})} className="w-full h-12 bg-bg-main border border-border-main rounded-xl px-4 text-sm font-bold text-text-primary outline-none [color-scheme:dark]" />
               </div>
             ))}
           </div>
           <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-widest text-white/40 ml-1">Work/School Hours</label>
-            <input placeholder="e.g. 9AM to 5PM" value={formData.lifestyle.workHours} onChange={e => setFormData({...formData, lifestyle: {...formData.lifestyle, workHours: e.target.value}})} className="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm font-bold text-white outline-none" />
+            <label className="text-[10px] font-black uppercase tracking-widest text-text-secondary ml-1">Work/School Hours</label>
+            <input placeholder="e.g. 9AM to 5PM" value={formData.lifestyle.workHours} onChange={e => setFormData({...formData, lifestyle: {...formData.lifestyle, workHours: e.target.value}})} className="w-full h-12 bg-bg-main border border-border-main rounded-xl px-4 text-sm font-bold text-text-primary outline-none" />
           </div>
         </div>
       );
@@ -346,18 +346,18 @@ export default function Onboarding({ uid, role, onComplete }: OnboardingProps) {
               <Users size={32} />
             </div>
             <div className="space-y-1">
-              <h3 className="font-black italic uppercase tracking-tight text-white">Invite your caregiver</h3>
-              <p className="text-[10px] font-bold text-white/40 max-w-[200px]">Link a family member or professional nurse to your circle.</p>
+              <h3 className="font-black italic uppercase tracking-tight text-text-primary">Invite your caregiver</h3>
+              <p className="text-[10px] font-bold text-text-secondary max-w-[200px]">Link a family member or professional nurse to your circle.</p>
             </div>
             <input 
               type="email" 
               placeholder="Caregiver Email Address" 
               value={formData.caregiverEmail}
               onChange={e => setFormData({...formData, caregiverEmail: e.target.value})}
-              className="w-full h-14 bg-white/10 border border-white/10 rounded-2xl px-6 text-sm font-bold outline-none focus:border-primary text-center text-white"
+              className="w-full h-14 bg-surface-main border border-border-main rounded-2xl px-6 text-sm font-bold outline-none focus:border-primary text-center text-text-primary"
             />
           </div>
-          <p className="text-center text-[10px] font-black uppercase tracking-widest text-white/40">They will receive an invitation to connect.</p>
+          <p className="text-center text-[10px] font-black uppercase tracking-widest text-text-secondary">They will receive an invitation to connect.</p>
         </div>
       );
       case 6: return (
@@ -368,7 +368,7 @@ export default function Onboarding({ uid, role, onComplete }: OnboardingProps) {
                 onClick={() => setFormData({...formData, womenHealthEnabled: !formData.womenHealthEnabled})}
                 className={cn(
                   "w-full p-6 rounded-3xl border-2 flex items-center justify-between transition-all",
-                  formData.womenHealthEnabled ? "bg-ai/10 border-ai text-ai" : "bg-white/5 border-white/5 text-white/60 hover:text-white"
+                  formData.womenHealthEnabled ? "bg-ai/10 border-ai text-ai" : "bg-white/5 border-border-main text-text-secondary opacity-60 hover:text-text-primary"
                 )}
               >
                 <div className="flex items-center gap-4">
@@ -384,12 +384,12 @@ export default function Onboarding({ uid, role, onComplete }: OnboardingProps) {
               {formData.womenHealthEnabled && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4 pt-4">
                    <div className="grid grid-cols-2 gap-3">
-                      <button onClick={() => setFormData({...formData, womenHealth: {...formData.womenHealth, isPregnant: !formData.womenHealth.isPregnant}})} className={cn("py-4 rounded-xl text-xs font-bold border transition-all", formData.womenHealth.isPregnant ? "bg-ai/20 border-ai text-ai" : "bg-white/5 border-white/10 text-white/60 hover:text-white")}>Currently Pregnant?</button>
-                      <button onClick={() => setFormData({...formData, womenHealth: {...formData.womenHealth, onBirthControl: !formData.womenHealth.onBirthControl}})} className={cn("py-4 rounded-xl text-xs font-bold border transition-all", formData.womenHealth.onBirthControl ? "bg-ai/20 border-ai text-ai" : "bg-white/5 border-white/10 text-white/60 hover:text-white")}>On Birth Control?</button>
+                      <button onClick={() => setFormData({...formData, womenHealth: {...formData.womenHealth, isPregnant: !formData.womenHealth.isPregnant}})} className={cn("py-4 rounded-xl text-xs font-bold border transition-all", formData.womenHealth.isPregnant ? "bg-ai/20 border-ai text-ai" : "bg-bg-main border border-border-main text-text-secondary opacity-60 hover:text-text-primary")}>Currently Pregnant?</button>
+                      <button onClick={() => setFormData({...formData, womenHealth: {...formData.womenHealth, onBirthControl: !formData.womenHealth.onBirthControl}})} className={cn("py-4 rounded-xl text-xs font-bold border transition-all", formData.womenHealth.onBirthControl ? "bg-ai/20 border-ai text-ai" : "bg-bg-main border border-border-main text-text-secondary opacity-60 hover:text-text-primary")}>On Birth Control?</button>
                    </div>
                    <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-white/40 ml-1">Last Period Start Date</label>
-                      <input type="date" value={formData.womenHealth.lastPeriodDate} onChange={e => setFormData({...formData, womenHealth: {...formData.womenHealth, lastPeriodDate: e.target.value}})} className="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm font-bold text-white outline-none [color-scheme:dark]" />
+                      <label className="text-[10px] font-black uppercase tracking-widest text-text-secondary ml-1">Last Period Start Date</label>
+                      <input type="date" value={formData.womenHealth.lastPeriodDate} onChange={e => setFormData({...formData, womenHealth: {...formData.womenHealth, lastPeriodDate: e.target.value}})} className="w-full h-12 bg-bg-main border border-border-main rounded-xl px-4 text-sm font-bold text-text-primary outline-none [color-scheme:dark]" />
                    </div>
                 </motion.div>
               )}
@@ -399,8 +399,8 @@ export default function Onboarding({ uid, role, onComplete }: OnboardingProps) {
               <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center text-primary">
                 <Check size={40} />
               </div>
-              <h3 className="text-2xl font-black italic uppercase tracking-tighter text-white">All Set!</h3>
-              <p className="text-white/40 text-sm font-medium">You've completed the onboarding process.</p>
+              <h3 className="text-2xl font-black italic uppercase tracking-tighter text-text-primary">All Set!</h3>
+              <p className="text-text-secondary text-sm font-medium">You've completed the onboarding process.</p>
             </div>
           )}
         </div>
@@ -415,7 +415,7 @@ export default function Onboarding({ uid, role, onComplete }: OnboardingProps) {
       case 2: return (
         <div className="space-y-6">
           <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-widest text-white/40 ml-1">Relationship to Patient</label>
+            <label className="text-[10px] font-black uppercase tracking-widest text-text-secondary ml-1">Relationship to Patient</label>
             <div className="grid grid-cols-2 gap-2">
               {['Spouse', 'Son / Daughter', 'Parent', 'Sibling', 'Professional Nurse', 'Friend'].map(r => (
                 <button 
@@ -423,7 +423,7 @@ export default function Onboarding({ uid, role, onComplete }: OnboardingProps) {
                   onClick={() => setFormData({...formData, relationship: r})}
                   className={cn(
                     "py-3 px-4 rounded-xl text-xs font-bold transition-all border",
-                    formData.relationship === r ? "bg-primary/20 border-primary text-primary" : "bg-white/5 border-white/10 text-white/60 hover:text-white"
+                    formData.relationship === r ? "bg-primary/20 border-primary text-primary" : "bg-bg-main border border-border-main text-text-secondary opacity-60 hover:text-text-primary"
                   )}
                 >
                   {r}
@@ -435,32 +435,32 @@ export default function Onboarding({ uid, role, onComplete }: OnboardingProps) {
             onClick={() => setFormData({...formData, isMedicalPro: !formData.isMedicalPro})}
             className={cn(
               "w-full p-4 rounded-2xl border flex items-center justify-between transition-all",
-              formData.isMedicalPro ? "bg-secondary/10 border-secondary text-secondary" : "bg-white/5 border-white/10 text-white/60 hover:text-white"
+              formData.isMedicalPro ? "bg-secondary/10 border-secondary text-secondary" : "bg-bg-main border border-border-main text-text-secondary opacity-60 hover:text-text-primary"
             )}
           >
             <span className="font-bold">Are you a Medical Professional?</span>
             {formData.isMedicalPro ? <Check size={20} /> : <div className="w-5 h-5 rounded-full border-2 border-white/10" />}
           </button>
           {formData.isMedicalPro && (
-            <input placeholder="Designation (Nurse / ANM / Health Worker)" value={formData.designation} onChange={e => setFormData({...formData, designation: e.target.value})} className="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm font-bold text-white outline-none" />
+            <input placeholder="Designation (Nurse / ANM / Health Worker)" value={formData.designation} onChange={e => setFormData({...formData, designation: e.target.value})} className="w-full h-12 bg-bg-main border border-border-main rounded-xl px-4 text-sm font-bold text-text-primary outline-none" />
           )}
         </div>
       );
       case 3: return (
         <div className="space-y-6">
           <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-widest text-white/40 ml-1">Preferred Alert Method</label>
+            <label className="text-[10px] font-black uppercase tracking-widest text-text-secondary ml-1">Preferred Alert Method</label>
             <div className="grid grid-cols-3 gap-2">
               {['Push', 'SMS', 'Both'].map(m => (
-                <button key={m} onClick={() => setFormData({...formData, alertMethod: m})} className={cn("py-3 rounded-xl text-xs font-bold border transition-all", formData.alertMethod === m ? "bg-primary/20 border-primary text-primary" : "bg-white/5 border-white/10 text-white/60 hover:text-white")}>{m}</button>
+                <button key={m} onClick={() => setFormData({...formData, alertMethod: m})} className={cn("py-3 rounded-xl text-xs font-bold border transition-all", formData.alertMethod === m ? "bg-primary/20 border-primary text-primary" : "bg-bg-main border border-border-main text-text-secondary opacity-60 hover:text-text-primary")}>{m}</button>
               ))}
             </div>
           </div>
           <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-widest text-white/40 ml-1">Quiet Hours (DND)</label>
+            <label className="text-[10px] font-black uppercase tracking-widest text-text-secondary ml-1">Quiet Hours (DND)</label>
             <div className="grid grid-cols-2 gap-2">
-              <input type="time" value={formData.quietHours.from} onChange={e => setFormData({...formData, quietHours: {...formData.quietHours, from: e.target.value}})} className="h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm font-bold text-white outline-none [color-scheme:dark]" />
-              <input type="time" value={formData.quietHours.to} onChange={e => setFormData({...formData, quietHours: {...formData.quietHours, to: e.target.value}})} className="h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm font-bold text-white outline-none [color-scheme:dark]" />
+              <input type="time" value={formData.quietHours.from} onChange={e => setFormData({...formData, quietHours: {...formData.quietHours, from: e.target.value}})} className="h-12 bg-bg-main border border-border-main rounded-xl px-4 text-sm font-bold text-text-primary outline-none [color-scheme:dark]" />
+              <input type="time" value={formData.quietHours.to} onChange={e => setFormData({...formData, quietHours: {...formData.quietHours, to: e.target.value}})} className="h-12 bg-bg-main border border-border-main rounded-xl px-4 text-sm font-bold text-text-primary outline-none [color-scheme:dark]" />
             </div>
           </div>
         </div>
@@ -470,14 +470,14 @@ export default function Onboarding({ uid, role, onComplete }: OnboardingProps) {
           <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center text-primary">
             <Anchor size={40} />
           </div>
-          <h3 className="text-xl font-black italic uppercase tracking-tight text-white">Link your patient</h3>
+          <h3 className="text-xl font-black italic uppercase tracking-tight text-text-primary">Link your patient</h3>
           <input 
             placeholder="Patient Email or Phone" 
             value={formData.linkedPatientEmail}
             onChange={e => setFormData({...formData, linkedPatientEmail: e.target.value})}
-            className="w-full h-14 bg-white/5 border border-white/10 rounded-2xl px-6 text-sm font-bold outline-none text-center text-white"
+            className="w-full h-14 bg-bg-main border border-border-main rounded-2xl px-6 text-sm font-bold outline-none text-center text-text-primary"
           />
-          <p className="text-[10px] font-bold text-white/40">We'll send them a connection request.</p>
+          <p className="text-[10px] font-bold text-text-secondary">We'll send them a connection request.</p>
         </div>
       );
       default: return null;
@@ -490,35 +490,35 @@ export default function Onboarding({ uid, role, onComplete }: OnboardingProps) {
       case 2: return (
         <div className="space-y-6">
           <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-widest text-white/40 ml-1">MCI/NMC Registration Number</label>
-            <input placeholder="Enter Registration No." value={formData.mciNumber} onChange={e => setFormData({...formData, mciNumber: e.target.value})} className="w-full h-14 bg-white/5 border border-white/10 rounded-xl px-4 text-sm font-bold text-white outline-none focus:border-primary" />
+            <label className="text-[10px] font-black uppercase tracking-widest text-text-secondary ml-1">MCI/NMC Registration Number</label>
+            <input placeholder="Enter Registration No." value={formData.mciNumber} onChange={e => setFormData({...formData, mciNumber: e.target.value})} className="w-full h-14 bg-bg-main border border-border-main rounded-xl px-4 text-sm font-bold text-text-primary outline-none focus:border-primary" />
           </div>
           <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-widest text-white/40 ml-1">Specialization</label>
+            <label className="text-[10px] font-black uppercase tracking-widest text-text-secondary ml-1">Specialization</label>
             <select 
               value={formData.specialization} 
               onChange={e => setFormData({...formData, specialization: e.target.value})} 
-              className="w-full h-14 bg-white/5 border border-white/10 rounded-xl px-4 text-sm font-bold text-white outline-none [&>option]:bg-[#1A1C1E] [&>option]:text-white"
+              className="w-full h-14 bg-bg-main border border-border-main rounded-xl px-4 text-sm font-bold text-text-primary outline-none [&>option]:bg-surface-main [&>option]:text-text-primary"
             >
-              <option value="" className="bg-[#1A1C1E] text-white">Select Specialization</option>
-              {['General Physician', 'Diabetologist', 'Cardiologist', 'Endocrinologist', 'Gynecologist', 'Neurologist'].map(s => <option key={s} value={s} className="bg-[#1A1C1E] text-white">{s}</option>)}
+              <option value="" className="bg-surface-main text-text-primary">Select Specialization</option>
+              {['General Physician', 'Diabetologist', 'Cardiologist', 'Endocrinologist', 'Gynecologist', 'Neurologist'].map(s => <option key={s} value={s} className="bg-surface-main text-text-primary">{s}</option>)}
             </select>
           </div>
           <div className="grid grid-cols-2 gap-2">
-             <input placeholder="Qualification (MBBS/MD)" value={formData.qualification} onChange={e => setFormData({...formData, qualification: e.target.value})} className="h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm font-bold text-white outline-none" />
-             <input placeholder="Years of Exp." value={formData.experience} onChange={e => setFormData({...formData, experience: e.target.value})} className="h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm font-bold text-white outline-none" />
+             <input placeholder="Qualification (MBBS/MD)" value={formData.qualification} onChange={e => setFormData({...formData, qualification: e.target.value})} className="h-12 bg-bg-main border border-border-main rounded-xl px-4 text-sm font-bold text-text-primary outline-none" />
+             <input placeholder="Years of Exp." value={formData.experience} onChange={e => setFormData({...formData, experience: e.target.value})} className="h-12 bg-bg-main border border-border-main rounded-xl px-4 text-sm font-bold text-text-primary outline-none" />
           </div>
         </div>
       );
       case 3: return (
         <div className="space-y-6">
-          <input placeholder="Hospital / Clinic Name" value={formData.doctorHospital} onChange={e => setFormData({...formData, doctorHospital: e.target.value})} className="w-full h-14 bg-white/5 border border-white/10 rounded-xl px-4 text-sm font-bold text-white outline-none" />
-          <input placeholder="City" value={formData.doctorCity} onChange={e => setFormData({...formData, doctorCity: e.target.value})} className="w-full h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm font-bold text-white outline-none" />
+          <input placeholder="Hospital / Clinic Name" value={formData.doctorHospital} onChange={e => setFormData({...formData, doctorHospital: e.target.value})} className="w-full h-14 bg-bg-main border border-border-main rounded-xl px-4 text-sm font-bold text-text-primary outline-none" />
+          <input placeholder="City" value={formData.doctorCity} onChange={e => setFormData({...formData, doctorCity: e.target.value})} className="w-full h-12 bg-bg-main border border-border-main rounded-xl px-4 text-sm font-bold text-text-primary outline-none" />
           <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-widest text-white/40 ml-1">Consultation Hours</label>
+            <label className="text-[10px] font-black uppercase tracking-widest text-text-secondary ml-1">Consultation Hours</label>
             <div className="grid grid-cols-2 gap-2">
-              <input type="time" value={formData.consultationHours.from} onChange={e => setFormData({...formData, consultationHours: {...formData.consultationHours, from: e.target.value}})} className="h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm font-bold text-white outline-none [color-scheme:dark]" />
-              <input type="time" value={formData.consultationHours.to} onChange={e => setFormData({...formData, consultationHours: {...formData.consultationHours, to: e.target.value}})} className="h-12 bg-white/5 border border-white/10 rounded-xl px-4 text-sm font-bold text-white outline-none [color-scheme:dark]" />
+              <input type="time" value={formData.consultationHours.from} onChange={e => setFormData({...formData, consultationHours: {...formData.consultationHours, from: e.target.value}})} className="h-12 bg-bg-main border border-border-main rounded-xl px-4 text-sm font-bold text-text-primary outline-none [color-scheme:dark]" />
+              <input type="time" value={formData.consultationHours.to} onChange={e => setFormData({...formData, consultationHours: {...formData.consultationHours, to: e.target.value}})} className="h-12 bg-bg-main border border-border-main rounded-xl px-4 text-sm font-bold text-text-primary outline-none [color-scheme:dark]" />
             </div>
           </div>
         </div>
@@ -526,18 +526,18 @@ export default function Onboarding({ uid, role, onComplete }: OnboardingProps) {
       case 4: return (
         <div className="space-y-6">
           <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-widest text-white/40 ml-1">Expected Patient Volume</label>
+            <label className="text-[10px] font-black uppercase tracking-widest text-text-secondary ml-1">Expected Patient Volume</label>
             <div className="grid grid-cols-2 gap-2">
               {['Under 10', '10-50', '50-100', '100+'].map(v => (
-                <button key={v} onClick={() => setFormData({...formData, expectedPatients: v})} className={cn("py-4 rounded-xl text-xs font-bold border transition-all", formData.expectedPatients === v ? "bg-ai/20 border-ai text-ai" : "bg-white/5 border-white/10 text-white/60 hover:text-white")}>{v}</button>
+                <button key={v} onClick={() => setFormData({...formData, expectedPatients: v})} className={cn("py-4 rounded-xl text-xs font-bold border transition-all", formData.expectedPatients === v ? "bg-ai/20 border-ai text-ai" : "bg-bg-main border border-border-main text-text-secondary opacity-60 hover:text-text-primary")}>{v}</button>
               ))}
             </div>
           </div>
           <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-widest text-white/40 ml-1">Preferred Report Format</label>
+            <label className="text-[10px] font-black uppercase tracking-widest text-text-secondary ml-1">Preferred Report Format</label>
             <div className="grid grid-cols-3 gap-2">
               {['Weekly', 'Critical Only', 'Both'].map(f => (
-                <button key={f} onClick={() => setFormData({...formData, reportFormat: f})} className={cn("py-3 rounded-xl text-xs font-bold border transition-all", formData.reportFormat === f ? "bg-primary/20 border-primary text-primary" : "bg-white/5 border-white/10 text-white/60 hover:text-white")}>{f}</button>
+                <button key={f} onClick={() => setFormData({...formData, reportFormat: f})} className={cn("py-3 rounded-xl text-xs font-bold border transition-all", formData.reportFormat === f ? "bg-primary/20 border-primary text-primary" : "bg-bg-main border border-border-main text-text-secondary opacity-60 hover:text-text-primary")}>{f}</button>
               ))}
             </div>
           </div>
@@ -548,7 +548,7 @@ export default function Onboarding({ uid, role, onComplete }: OnboardingProps) {
   };
 
   return (
-    <div className="fixed inset-0 bg-dark-primary z-[200] flex flex-col p-6 safe-area-bottom overflow-y-auto no-scrollbar">
+    <div className="fixed inset-0 bg-bg-main z-[200] flex flex-col p-6 safe-area-bottom overflow-y-auto no-scrollbar">
       <div className="max-w-xl mx-auto w-full flex-1 flex flex-col pt-10 pb-20">
         
         {/* Header */}
@@ -556,17 +556,17 @@ export default function Onboarding({ uid, role, onComplete }: OnboardingProps) {
           <button 
             onClick={handleBack} 
             disabled={step === 1}
-            className={cn("p-2 rounded-xl transition-all", step === 1 ? "opacity-0 pointer-events-none" : "bg-white/5 hover:bg-white/10")}
+            className={cn("p-2 rounded-xl transition-all", step === 1 ? "opacity-0 pointer-events-none" : "bg-surface-main border border-border-main text-text-secondary hover:text-text-primary")}
           >
             <ChevronLeft size={20} />
           </button>
           <div className="flex flex-col items-center">
             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Step {step} of {currentSteps.length}</span>
-            <span className="text-[8px] font-bold text-white/40 uppercase tracking-widest">~{role === 'patient' ? '3' : '2'} mins remaining</span>
+            <span className="text-[8px] font-bold text-text-secondary uppercase tracking-widest">~{role === 'patient' ? '3' : '2'} mins remaining</span>
           </div>
           <button 
             onClick={skipStep}
-            className="text-[10px] font-black uppercase tracking-widest text-white/40 hover:text-white transition-colors"
+            className="text-[10px] font-black uppercase tracking-widest text-text-secondary hover:text-text-primary transition-colors"
           >
             Skip
           </button>
@@ -585,15 +585,15 @@ export default function Onboarding({ uid, role, onComplete }: OnboardingProps) {
             className="flex-1"
           >
             <div className="space-y-2 mb-8">
-              <h1 className="text-4xl font-black tracking-tighter leading-none italic uppercase text-white">
+              <h1 className="text-4xl font-black tracking-tighter leading-none italic uppercase text-text-primary">
                 {currentSteps[step - 1].title}
               </h1>
-              <p className="text-white/40 text-sm font-medium leading-relaxed max-w-[280px]">
+              <p className="text-text-secondary text-sm font-medium leading-relaxed max-w-[280px]">
                 {currentSteps[step - 1].desc}
               </p>
             </div>
 
-            <div className="glass-dark rounded-[32px] p-6 mb-8">
+            <div className="card p-6 mb-8 bg-surface-main">
                {role === 'patient' && renderPatientSteps()}
                {role === 'caregiver' && renderCaregiverSteps()}
                {role === 'doctor' && renderDoctorSteps()}

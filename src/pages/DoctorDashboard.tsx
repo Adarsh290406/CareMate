@@ -12,10 +12,30 @@ import NotificationCenter from "../components/NotificationCenter";
 import { useAuth } from "../hooks/useAuth";
 
 export default function DoctorDashboard() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const [activeTab, setActiveTab] = useState("surveillance");
   const [selectedPatient, setSelectedPatient] = useState<any>(null);
   const [showPrescriptionModal, setShowPrescriptionModal] = useState(false);
+  const [realAppointments, setRealAppointments] = useState<any[]>([]);
+  const [loadingAppts, setLoadingAppts] = useState(false);
+
+  useEffect(() => {
+    if (!user) return;
+    const fetchAppts = async () => {
+      setLoadingAppts(true);
+      try {
+        // Fetch all appointments (In a real app, you'd filter by doctorId)
+        const q = query(collection(db, "appointments"), orderBy("date", "asc"));
+        const snap = await getDocs(q);
+        setRealAppointments(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+      } catch (err) {
+        console.error("Error fetching appts:", err);
+      } finally {
+        setLoadingAppts(false);
+      }
+    };
+    fetchAppts();
+  }, [user]);
 
   const patients = [
     { id: "1", name: "Robert Smith", condition: "Type 2 Diabetes", adherence: 88, risk: "low", lastCheck: "14m ago", age: 62, blood: "A+", gender: "Male" },
@@ -36,7 +56,9 @@ export default function DoctorDashboard() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-extrabold tracking-tighter text-text-primary">Medical Command</h1>
-            <p className="text-text-secondary text-sm font-medium">Dr. David Miller — Cardiology Unit</p>
+            <p className="text-text-secondary text-sm font-medium">
+              {profile?.name || "Healthcare Provider"} — {profile?.specialty || "General Medicine"}
+            </p>
           </div>
           <div className="flex gap-2">
             <NotificationCenter userId={user?.uid} />
@@ -132,6 +154,56 @@ export default function DoctorDashboard() {
               </motion.div>
             ))}
           </div>
+        </section>
+      )}
+
+      {activeTab === "appointments" && (
+        <section className="space-y-6">
+           <div className="flex items-center justify-between px-1">
+             <h2 className="text-xs font-black uppercase tracking-[0.2em] text-text-secondary flex items-center gap-2">
+               <Calendar size={14} className="text-primary" /> Daily Clinic Schedule
+             </h2>
+             <button className="text-[10px] font-black uppercase text-primary px-3 py-1 bg-primary/10 rounded-xl">
+                Filter by Date
+             </button>
+           </div>
+
+           <div className="space-y-4">
+              {loadingAppts ? (
+                <div className="p-12 text-center text-text-secondary animate-pulse uppercase text-[10px] font-black tracking-widest">
+                   Syncing Clinic Schedule...
+                </div>
+              ) : realAppointments.length > 0 ? (
+                realAppointments.map((appt, i) => (
+                  <div key={appt.id || i} className="card p-6 bg-surface-main border border-border-main flex items-center justify-between group hover:border-primary/20 transition-all">
+                     <div className="flex items-center gap-6">
+                        <div className="text-center w-20">
+                           <p className="text-lg font-black tracking-tighter text-text-primary">{appt.time}</p>
+                           <p className="text-[8px] font-black uppercase text-text-secondary opacity-60">{appt.date}</p>
+                        </div>
+                        <div className="w-px h-10 bg-border-main" />
+                        <div>
+                           <h4 className="font-bold text-text-primary">{appt.patientName || "Patient"}</h4>
+                           <p className="text-[10px] font-bold text-text-secondary uppercase tracking-widest">{appt.doctor || appt.title || "Consultation"}</p>
+                        </div>
+                     </div>
+                     <div className="flex items-center gap-4">
+                        <span className={cn(
+                          "text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full",
+                          appt.status === "confirmed" || appt.status === "scheduled" ? "bg-success/10 text-success" : "bg-warning/10 text-warning"
+                        )}>
+                           {appt.status}
+                        </span>
+                        <ChevronRight size={18} className="text-border-main group-hover:text-primary transition-colors" />
+                     </div>
+                  </div>
+                ))
+              ) : (
+                <div className="p-12 text-center card bg-surface-main border-dashed border-border-main text-text-secondary">
+                   <p className="text-xs font-bold">No appointments found.</p>
+                </div>
+              )}
+           </div>
         </section>
       )}
 

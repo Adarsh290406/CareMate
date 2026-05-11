@@ -147,19 +147,31 @@ async function startServer() {
   // AI Vision/OCR Endpoint
   app.post("/api/ai/analyze-prescription", async (req, res) => {
     try {
-      const { image } = req.body;
+      const { image, task } = req.body;
       const GEMINI_API_KEY = (process.env.GEMINI_API_KEY || "").replace(/['"]/g, "");
       const GROQ_API_KEY = (process.env.GROQ_API_KEY || "").replace(/['"]/g, "").trim();
       
       const ai = new (GoogleGenAI as any)({ apiKey: GEMINI_API_KEY });
       const base64Data = image.includes(",") ? image.split(",")[1] : image;
       
-      const prompt = `Extract medications from this prescription. Return ONLY JSON:
+      let prompt = `Extract medications from this prescription. Return ONLY JSON:
       {
         "medications": [
           { "name": "Name", "dosage": "Dosage", "frequency": "Frequency", "duration": "Duration" }
         ]
       }`;
+
+      if (task === "identify-pill") {
+        prompt = `Identify this pill from the image. Tell me its name, dosage, and color/shape. Return ONLY JSON:
+        {
+          "pillName": "Pill Name",
+          "name": "Pill Name",
+          "dosage": "Typical Dosage (e.g. 10mg)",
+          "match": true,
+          "description": "Short summary of identification",
+          "visuals": { "shape": "round/oval", "color": "white/blue" }
+        }`;
+      }
 
       // Try Gemini First (Best for OCR)
       try {
@@ -177,6 +189,8 @@ async function startServer() {
 
         const jsonStr = result.text.match(/\{[\s\S]*\}/)?.[0];
         if (jsonStr) return res.json(JSON.parse(jsonStr));
+        else res.json(task === "identify-pill" ? { pillName: "Unknown", name: "Unknown" } : { medications: [] });
+        return;
       } catch (geminiErr: any) {
         console.error("Gemini Vision Failed, trying Groq Vision...", geminiErr.message || geminiErr);
       }
@@ -218,9 +232,24 @@ async function startServer() {
         if (content) {
           console.log("Groq Vision Response received.");
           const jsonStr = content.match(/\{[\s\S]*\}/)?.[0];
-          return res.json(jsonStr ? JSON.parse(jsonStr) : { medications: [] });
+          let finalJson;
+          try {
+            finalJson = jsonStr ? JSON.parse(jsonStr) : null;
+          } catch (parseErr) {
+            console.error("JSON Parse Error in Vision:", parseErr);
+            finalJson = null;
+          }
+          
+          if (!finalJson) {
+             finalJson = (task === "identify-pill" ? { pillName: "Unknown", name: "Unknown" } : { medications: [] });
+          }
+          
+          console.log("Final JSON sent to client:", JSON.stringify(finalJson));
+          return res.json(finalJson);
         } else {
           console.error("Groq Vision returned no content:", JSON.stringify(data));
+          res.json(task === "identify-pill" ? { pillName: "Unknown", name: "Unknown" } : { medications: [] });
+          return;
         }
       }
 
