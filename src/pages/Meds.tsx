@@ -9,7 +9,9 @@ import { cn } from "../lib/utils";
 import { useMedications } from "../hooks/useMedications";
 import { useAuth } from "../hooks/useAuth";
 import AddMedModal from "../components/AddMedModal";
+import BulkAddModal from "../components/BulkAddModal";
 import InteractionChecker from "../components/InteractionChecker";
+import { FileUp } from "lucide-react";
 
 interface MedRowProps {
   med: any;
@@ -73,13 +75,13 @@ const MedRow = ({ med, color }: MedRowProps) => {
              {[1, 2, 3, 4, 5].map(i => (
                <div key={i} className={cn(
                  "w-6 h-6 rounded-full border-2 border-surface flex items-center justify-center",
-                 i < 4 ? "bg-primary text-white" : "bg-border text-text-muted"
+                 i < 4 ? "bg-primary text-white" : "bg-border text-text-secondary"
                )}>
                  <Check size={10} />
                </div>
              ))}
            </div>
-           <button className="flex items-center gap-1.5 text-primary-accent hover:text-white transition-colors">
+           <button className="flex items-center gap-1.5 text-primary hover:text-text-primary transition-colors">
              <span className="text-[10px] font-black uppercase tracking-widest">Details</span>
              <ChevronRight size={14} />
            </button>
@@ -95,6 +97,7 @@ export default function Meds() {
   const [activeTab, setActiveTab] = useState<"active" | "paused">("active");
   const [searchQuery, setSearchQuery] = useState("");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
   const [isCheckerOpen, setIsCheckerOpen] = useState(false);
 
   const colors = ["#3B82F6", "#00C896", "#FF7F50", "#7C3AED"];
@@ -125,7 +128,7 @@ export default function Meds() {
             onClick={() => setActiveTab("active")}
             className={cn(
               "flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2",
-              activeTab === "active" ? "bg-primary text-white shadow-lg shadow-primary/20" : "text-text-secondary hover:text-text-primary"
+              activeTab === "active" ? "bg-primary text-text-primary shadow-lg shadow-primary/20" : "text-text-secondary hover:text-text-primary"
             )}
           >
             <Play size={14} fill={activeTab === "active" ? "currentColor" : "none"} /> Active
@@ -141,15 +144,24 @@ export default function Meds() {
           </button>
         </div>
 
-        <div className="relative">
-          <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary opacity-60" />
-          <input 
-            type="text"
-            placeholder="Search medications..."
-            value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
-            className="w-full h-14 bg-surface-main border border-border-main rounded-2xl pl-12 pr-4 text-sm font-medium text-text-primary focus:outline-none focus:border-primary/50 transition-all"
-          />
+        <div className="flex gap-3">
+          <div className="relative flex-1">
+            <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-text-secondary opacity-60" />
+            <input 
+              type="text"
+              placeholder="Search medications..."
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              className="w-full h-14 bg-surface-main border border-border-main rounded-2xl pl-12 pr-4 text-sm font-medium text-text-primary focus:outline-none focus:border-primary/50 transition-all"
+            />
+          </div>
+          <button 
+            onClick={() => setIsBulkModalOpen(true)}
+            className="h-14 px-6 bg-surface-main border border-border-main rounded-2xl flex items-center gap-2 hover:border-primary/50 transition-all text-text-secondary hover:text-primary group"
+          >
+            <FileUp size={18} className="group-hover:scale-110 transition-transform" />
+            <span className="text-[10px] font-black uppercase tracking-widest hidden sm:block">Bulk Upload</span>
+          </button>
         </div>
       </header>
 
@@ -182,7 +194,7 @@ export default function Meds() {
 
       <button 
         onClick={() => setIsAddModalOpen(true)}
-        className="fixed bottom-24 right-6 w-16 h-16 bg-primary text-white rounded-[2rem] shadow-2xl shadow-primary/40 flex items-center justify-center animate-bounce-subtle z-40 transition-transform active:scale-90"
+        className="fixed bottom-24 right-6 w-16 h-16 bg-primary text-text-primary rounded-[2rem] shadow-2xl shadow-primary/40 flex items-center justify-center animate-bounce-subtle z-40 transition-transform active:scale-90"
       >
         <Plus size={32} strokeWidth={3} />
       </button>
@@ -191,6 +203,14 @@ export default function Meds() {
         <AddMedModal 
           isOpen={isAddModalOpen} 
           onClose={() => setIsAddModalOpen(false)} 
+          patientId={user.uid} 
+        />
+      )}
+
+      {user && (
+        <BulkAddModal 
+          isOpen={isBulkModalOpen} 
+          onClose={() => setIsBulkModalOpen(false)} 
           patientId={user.uid} 
         />
       )}

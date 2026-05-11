@@ -31,7 +31,7 @@ export default function SymptomAnalyzer({ medications }: SymptomAnalyzerProps) {
     <>
       <button 
         onClick={() => setIsOpen(true)}
-        className="w-full dense-card p-4 flex items-center justify-between group hover:border-primary-accent/50 transition-all"
+        className="w-full bg-bg-main border border-border-main flex items-center justify-between group hover:border-primary/50 transition-all"
       >
         <div className="flex items-center gap-4">
           <div className="w-10 h-10 rounded-xl bg-danger/10 flex items-center justify-center text-danger">
@@ -39,10 +39,10 @@ export default function SymptomAnalyzer({ medications }: SymptomAnalyzerProps) {
           </div>
           <div className="text-left">
             <h3 className="font-bold text-sm tracking-tight">Symptom Checker</h3>
-            <p className="text-[10px] text-text-muted uppercase tracking-widest font-black">AI Side-Effect Analysis</p>
+            <p className="text-[10px] text-text-secondary uppercase tracking-widest font-black">AI Side-Effect Analysis</p>
           </div>
         </div>
-        <ChevronRight size={16} className="text-text-muted group-hover:text-primary-accent transition-colors" />
+        <ChevronRight size={16} className="text-text-secondary group-hover:text-primary transition-colors" />
       </button>
 
       <AnimatePresence>
@@ -59,7 +59,7 @@ export default function SymptomAnalyzer({ medications }: SymptomAnalyzerProps) {
               initial={{ scale: 0.95, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 20 }}
-              className="relative w-full max-w-md dense-card p-6 bg-surface border border-white/10 shadow-2xl"
+              className="relative w-full max-w-md bg-surface-main border border-border-main shadow-2xl p-6 rounded-3xl"
             >
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold flex items-center gap-2">
@@ -78,12 +78,12 @@ export default function SymptomAnalyzer({ medications }: SymptomAnalyzerProps) {
                     onChange={e => setQuery(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && analyzeSymptom()}
                     placeholder="Describe your symptom (e.g., 'dizzy', 'nausea')"
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-primary-accent/50"
+                    className="w-full bg-bg-main border border-border-main rounded-xl px-4 py-3 text-text-primary outline-none focus:border-primary/50"
                   />
                   <button 
                     onClick={analyzeSymptom}
                     disabled={loading}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-primary-accent text-white rounded-lg"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-primary text-text-primary rounded-lg shadow-lg shadow-primary/20"
                   >
                     {loading ? <RefreshCw size={16} className="animate-spin" /> : <Search size={16} />}
                   </button>
@@ -113,9 +113,9 @@ export default function SymptomAnalyzer({ medications }: SymptomAnalyzerProps) {
 
                     {result.relatedMedications?.length > 0 && (
                       <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-text-muted">Associated Drugs</label>
+                        <label className="text-[10px] font-black uppercase tracking-widest text-text-secondary">Associated Drugs</label>
                         {result.relatedMedications.map((med: string, i: number) => (
-                          <div key={i} className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/5">
+                          <div key={i} className="flex items-center justify-between p-3 bg-bg-main border border-border-main">
                             <span className="text-xs font-bold">{med}</span>
                             <span className="text-[9px] font-black uppercase tracking-widest text-danger px-1.5 py-0.5 bg-danger/10 rounded">Side Effect Risk</span>
                           </div>

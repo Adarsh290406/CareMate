@@ -6,6 +6,7 @@ import { useMedications } from "../hooks/useMedications";
 import AppointmentScheduler from "../components/AppointmentScheduler";
 import SymptomAnalyzer from "../components/SymptomAnalyzer";
 import HealthImpactSimulator from "../components/HealthImpactSimulator";
+import ReportGenerator from "../components/ReportGenerator";
 import { cn } from "../lib/utils";
 
 export default function Care() {
@@ -52,36 +53,8 @@ export default function Care() {
 
       {/* Medical Reports Section */}
       <section className="space-y-4">
-        <h2 className="text-[11px] font-black uppercase tracking-[0.2em] text-[var(--text-secondary)] px-1">Health Records</h2>
-        <div className="card p-6 space-y-6">
-          <div className="flex items-start justify-between">
-            <div className="flex gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-ai/10 flex items-center justify-center text-ai shadow-lg shadow-ai/10">
-                <Brain size={24} />
-              </div>
-              <div>
-                <h3 className="font-bold text-lg leading-none mb-1 text-text-primary">Pre-Appointment AI Summary</h3>
-                <p className="text-xs text-text-secondary max-w-xs">A clinical-grade briefing of your last 3 months, ready for your doctor.</p>
-              </div>
-            </div>
-            <span className="text-[10px] font-black uppercase tracking-widest text-ai px-2 py-1 bg-ai/10 rounded">Smart Report</span>
-          </div>
-
-          <div className="grid grid-cols-3 gap-3">
-             <button className="flex flex-col items-center gap-2 p-3 bg-bg-main border border-border-main rounded-2xl hover:border-primary/50 transition-all text-text-primary">
-                <FileText size={18} className="text-primary" />
-                <span className="text-[8px] font-black uppercase tracking-widest">View PDF</span>
-             </button>
-             <button className="flex flex-col items-center gap-2 p-3 bg-bg-main border border-border-main rounded-2xl hover:border-primary/50 transition-all text-text-primary">
-                <Share2 size={18} className="text-primary" />
-                <span className="text-[8px] font-black uppercase tracking-widest">Share Link</span>
-             </button>
-             <button className="flex flex-col items-center gap-2 p-3 bg-bg-main border border-border-main rounded-2xl hover:border-primary/50 transition-all text-text-primary">
-                <Download size={18} className="text-primary" />
-                <span className="text-[8px] font-black uppercase tracking-widest">Download</span>
-             </button>
-          </div>
-        </div>
+        <h2 className="text-[11px] font-black uppercase tracking-[0.2em] text-text-secondary px-1">Health Records</h2>
+        <ReportGenerator user={user} profile={profile} medications={medications} />
       </section>
 
       {/* Care Team Section */}

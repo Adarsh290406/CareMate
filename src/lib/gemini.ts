@@ -136,13 +136,22 @@ export async function explainAnomaly(riskScore: number, adherenceData: any) {
  * Medication Encyclopedia
  */
 export async function searchMedInfo(medName: string): Promise<any> {
-  const prompt = `Provide detailed simplified medical information for: ${medName}. Return ONLY JSON.`;
-  const res = await callAi("You are a pharmacist.", prompt);
+  const prompt = `Provide detailed simplified medical information for: ${medName}. 
+  Return ONLY JSON with these exact keys:
+  {
+    "name": "Medication Name",
+    "generalDescription": "Simple 1-sentence description",
+    "commonUses": "Bullet points or short text",
+    "sideEffects": "Common side effects",
+    "precautions": "Safety warnings",
+    "interestingFact": "A fun or important fact"
+  }`;
+  const res = await callAi("You are an expert pharmacist who explains things clearly to patients.", prompt);
   try {
     const jsonStr = res.text.match(/\{[\s\S]*\}/)?.[0];
     return JSON.parse(jsonStr || "{}");
   } catch (e) {
-    return { name: medName, generalDescription: "Information unavailable." };
+    return { name: medName, generalDescription: "Information currently unavailable." };
   }
 }
 
@@ -210,5 +219,30 @@ export async function optimizeSchedule(meds: any[], lifestyle: any): Promise<any
     return JSON.parse(jsonStr || "{}");
   } catch (e) {
     return { changes: [], rationale: "Optimization offline." };
+  }
+}
+
+/**
+ * Symptom to Medication Side-Effect Correlation
+ */
+export async function analyzeSymptomRelation(symptom: string, medications: any[]) {
+  const medNames = medications.map(m => m.name).join(", ");
+  const prompt = `A patient reports this symptom: "${symptom}".
+  They are currently taking these medications: ${medNames}.
+  Analyze if the symptom is a likely side-effect of any of these medications.
+  Return ONLY JSON:
+  {
+    "related": boolean,
+    "explanation": "2 sentence clear explanation",
+    "relatedMedications": ["Med Name 1", "Med Name 2"],
+    "action": "short advice string"
+  }`;
+
+  const res = await callAi("You are a clinical pharmacologist specializing in side-effects.", prompt);
+  try {
+    const jsonStr = res.text.match(/\{[\s\S]*\}/)?.[0];
+    return JSON.parse(jsonStr || "{}");
+  } catch (e) {
+    return { related: false, explanation: "I couldn't analyze the link at this time.", relatedMedications: [], action: "Consult your healthcare provider." };
   }
 }
