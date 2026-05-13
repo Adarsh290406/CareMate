@@ -81,7 +81,7 @@ export default function Profile() {
           active: pushEnabled, 
           onToggle: handlePushToggle 
         },
-        { label: "Dosage History", icon: Clock },
+        { label: "Dosage History", icon: Clock, path: "/dosage-history" },
       ]
     },
     {
@@ -140,12 +140,21 @@ export default function Profile() {
       </section>
 
       {/* Stats Row */}
-      <section className="grid grid-cols-3 gap-3">
+      <section className={cn(
+        "grid gap-4",
+        elderlyMode ? "grid-cols-1" : "grid-cols-3"
+      )}>
         {stats.map((stat) => (
           <div key={stat.label} className="card p-4 text-center flex flex-col items-center gap-1 bg-surface-main border border-border-main rounded-2xl">
-            <stat.icon size={16} className={stat.color} />
-            <span className="mono text-xl tracking-tighter text-text-primary">{stat.value}</span>
-            <span className="text-[9px] font-black uppercase tracking-widest text-text-secondary">{stat.label}</span>
+            <stat.icon size={elderlyMode ? 24 : 16} className={stat.color} />
+            <span className={cn(
+              "mono tracking-tighter text-text-primary",
+              elderlyMode ? "text-3xl" : "text-xl"
+            )}>{stat.value}</span>
+            <span className={cn(
+              "font-black uppercase tracking-widest text-text-secondary",
+              elderlyMode ? "text-xs" : "text-[9px]"
+            )}>{stat.label}</span>
           </div>
         ))}
       </section>
@@ -161,9 +170,12 @@ export default function Profile() {
                   onClick={() => item.path && navigate(item.path)}
                   className="p-5 flex items-center justify-between group cursor-pointer hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors"
                 >
-                  <div className="flex items-center gap-4">
-                    {item.icon && <item.icon size={18} className="text-text-secondary" />}
-                    <span className="text-[14px] font-semibold text-text-primary">{item.label}</span>
+                  <div className="flex items-center gap-6">
+                    {item.icon && <item.icon size={elderlyMode ? 24 : 18} className="text-text-secondary" />}
+                    <span className={cn(
+                      "font-semibold text-text-primary",
+                      elderlyMode ? "text-lg" : "text-[14px]"
+                    )}>{item.label}</span>
                   </div>
                   {item.type === 'toggle' ? (
                     <button 
@@ -173,21 +185,29 @@ export default function Profile() {
                       }}
                       className={cn(
                         "w-12 h-7 rounded-full transition-all duration-300 p-1 flex items-center",
-                        item.active ? "bg-primary" : "bg-bg-main border border-border-main"
+                        item.active ? "bg-primary" : "bg-bg-main border border-border-main",
+                        elderlyMode && "w-16 h-10"
                       )}
                     >
                       <motion.div 
                         layout
-                        className="w-5 h-5 bg-white rounded-full shadow-md"
-                        animate={{ x: item.active ? 20 : 0 }}
+                        className={cn(
+                          "bg-white rounded-full shadow-md",
+                          elderlyMode ? "w-8 h-8" : "w-5 h-5"
+                        )}
+                        animate={{ x: item.active ? (elderlyMode ? 24 : 20) : 0 }}
                       />
                     </button>
                   ) : (
                     <div className="flex items-center gap-2">
-                       {item.badge && <span className="text-[10px] font-black text-primary uppercase tracking-widest px-2 py-0.5 bg-primary/10 rounded-full">{item.badge}</span>}
-                       <ChevronRight size={16} className="text-border-main group-hover:text-primary transition-colors" />
+                       {item.badge && <span className={cn(
+                         "font-black text-primary uppercase tracking-widest px-2 py-0.5 bg-primary/10 rounded-full",
+                         elderlyMode ? "text-xs" : "text-[10px]"
+                       )}>{item.badge}</span>}
+                       <ChevronRight size={elderlyMode ? 24 : 16} className="text-border-main group-hover:text-primary transition-colors" />
                     </div>
                   )}
+
                 </div>
               ))}
             </div>
@@ -199,23 +219,36 @@ export default function Profile() {
            {/* Dark Mode */}
            <div 
              onClick={() => setDarkMode(!darkMode)}
-             className="card p-5 flex items-center justify-between cursor-pointer active:scale-[0.99] transition-transform bg-surface-main border border-border-main rounded-3xl"
+             className={cn(
+               "card p-5 flex items-center justify-between cursor-pointer active:scale-[0.99] transition-transform bg-surface-main border border-border-main rounded-3xl",
+               elderlyMode && "p-8"
+             )}
            >
-              <div className="flex items-center gap-4">
-                {darkMode ? <Moon size={18} className="text-primary" /> : <Sun size={18} className="text-warning" />}
+              <div className="flex items-center gap-6">
+                {darkMode ? <Moon size={elderlyMode ? 24 : 18} className="text-primary" /> : <Sun size={elderlyMode ? 24 : 18} className="text-warning" />}
                 <div>
-                  <p className="text-[14px] font-semibold text-text-primary">Dark Mode</p>
-                  <p className="text-[10px] text-text-secondary uppercase font-black tracking-widest">{darkMode ? "Eye protection active" : "Classic interface"}</p>
+                  <p className={cn(
+                    "font-semibold text-text-primary",
+                    elderlyMode ? "text-xl" : "text-[14px]"
+                  )}>Dark Mode</p>
+                  <p className={cn(
+                    "text-text-secondary uppercase font-black tracking-widest",
+                    elderlyMode ? "text-xs" : "text-[10px]"
+                  )}>{darkMode ? "Eye protection active" : "Classic interface"}</p>
                 </div>
               </div>
               <div className={cn(
                 "w-12 h-7 rounded-full p-1 transition-all duration-300 flex items-center",
-                darkMode ? "bg-primary" : "bg-bg-main border border-border-main"
+                darkMode ? "bg-primary" : "bg-bg-main border border-border-main",
+                elderlyMode && "w-16 h-10"
               )}>
                 <motion.div 
                    layout
-                   className="w-5 h-5 bg-white rounded-full shadow-md"
-                   animate={{ x: darkMode ? 20 : 0 }}
+                   className={cn(
+                     "bg-white rounded-full shadow-md",
+                     elderlyMode ? "w-8 h-8" : "w-5 h-5"
+                   )}
+                   animate={{ x: darkMode ? (elderlyMode ? 24 : 20) : 0 }}
                 />
               </div>
            </div>
@@ -236,27 +269,44 @@ export default function Profile() {
                    tag: "test-notification"
                 });
              }}
-             className="w-full card border-primary/20 bg-primary/10 p-5 flex items-center justify-between group active:scale-[0.99] transition-transform rounded-3xl shadow-sm"
+             className={cn(
+               "w-full card border-primary/20 bg-primary/10 p-5 flex items-center justify-between group active:scale-[0.99] transition-transform rounded-3xl shadow-sm",
+               elderlyMode && "p-8"
+             )}
            >
-              <div className="flex items-center gap-4 text-left">
-                <Zap size={18} className="text-primary" />
+              <div className="flex items-center gap-6 text-left">
+                <Zap size={elderlyMode ? 24 : 18} className="text-primary" />
                 <div>
-                  <p className="text-[14px] font-semibold text-text-primary">Test Alert System</p>
-                  <p className="text-[10px] text-text-secondary uppercase font-black tracking-widest opacity-60">Verify notifications are working</p>
+                  <p className={cn(
+                    "font-semibold text-text-primary",
+                    elderlyMode ? "text-xl" : "text-[14px]"
+                  )}>Test Alert System</p>
+                  <p className={cn(
+                    "text-text-secondary uppercase font-black tracking-widest opacity-60",
+                    elderlyMode ? "text-xs" : "text-[10px]"
+                  )}>Verify notifications are working</p>
                 </div>
               </div>
-              <div className="flex items-center gap-2 px-3 py-1 bg-primary text-black rounded-lg text-[10px] font-black uppercase tracking-widest">
+              <div className={cn(
+                "flex items-center gap-2 bg-primary text-black rounded-lg font-black uppercase tracking-widest",
+                elderlyMode ? "px-6 py-3 text-sm" : "px-3 py-1 text-[10px]"
+              )}>
                 Test
               </div>
            </button>
+
         </div>
 
         <button 
           onClick={() => auth.signOut()}
-          className="w-full py-6 text-danger text-[11px] font-black uppercase tracking-[0.3em] flex items-center justify-center gap-3 active:scale-95 transition-all"
+          className={cn(
+            "w-full text-danger font-black uppercase tracking-[0.3em] flex items-center justify-center gap-3 active:scale-95 transition-all",
+            elderlyMode ? "py-10 text-lg" : "py-6 text-[11px]"
+          )}
         >
-          <LogOut size={16} /> Secure Sign Out
+          <LogOut size={elderlyMode ? 24 : 16} /> Secure Sign Out
         </button>
+
       </section>
     </div>
   );

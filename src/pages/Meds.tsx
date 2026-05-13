@@ -16,12 +16,13 @@ import { FileUp } from "lucide-react";
 interface MedRowProps {
   med: any;
   color: string;
+  onToggleStatus: (id: string, currentStatus: string) => void;
   key?: React.Key;
 }
 
-const MedRow = ({ med, color }: MedRowProps) => {
+const MedRow = ({ med, color, onToggleStatus }: MedRowProps) => {
   const x = useMotionValue(0);
-  const [swiped, setSwiped] = useState(false);
+  const isPaused = med.status === "paused";
 
   return (
     <div className="relative overflow-hidden rounded-3xl bg-surface-main mb-3 group">
@@ -41,7 +42,7 @@ const MedRow = ({ med, color }: MedRowProps) => {
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-white shadow-lg" style={{ backgroundColor: color }}>
+            <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-white shadow-lg" style={{ backgroundColor: isPaused ? "#94a3b8" : color }}>
               <Activity size={24} />
             </div>
             <div>
@@ -49,20 +50,25 @@ const MedRow = ({ med, color }: MedRowProps) => {
               <div className="flex items-center gap-2">
                 <span className="text-xs text-text-secondary font-medium">{med.dosage}</span>
                 <div className="w-1 h-1 rounded-full bg-border-main" />
-                <span className="text-[10px] text-primary font-black uppercase tracking-widest">Active</span>
+                <span className={cn(
+                  "text-[10px] font-black uppercase tracking-widest",
+                  isPaused ? "text-text-secondary opacity-60" : "text-primary"
+                )}>
+                  {isPaused ? "Paused" : "Active"}
+                </span>
               </div>
             </div>
           </div>
           <div className="text-right">
-            <span className="text-sm font-black italic tracking-tighter block">14 DAY</span>
-            <span className="text-[8px] font-black uppercase tracking-widest opacity-40">STREAK 🔥</span>
+            <span className="text-sm font-black italic tracking-tighter block text-text-primary">{isPaused ? "HOLD" : "14 DAY"}</span>
+            <span className="text-[8px] font-black uppercase tracking-widest opacity-40 text-text-secondary">{isPaused ? "INACTIVE" : "STREAK 🔥"}</span>
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-3 pt-2 border-t border-border-main/50">
           <div className="flex flex-col gap-1">
              <span className="text-[9px] font-black uppercase tracking-widest opacity-40 text-text-secondary">Generic Name</span>
-             <span className="text-xs font-bold truncate text-text-primary">Lisinopril-HCTZ</span>
+             <span className="text-xs font-bold truncate text-text-primary">{med.genericName || "Unspecified"}</span>
           </div>
           <div className="flex flex-col gap-1">
              <span className="text-[9px] font-black uppercase tracking-widest opacity-40 text-text-secondary">Frequency</span>
@@ -71,15 +77,19 @@ const MedRow = ({ med, color }: MedRowProps) => {
         </div>
 
         <div className="flex items-center justify-between pt-1">
-           <div className="flex -space-x-2">
-             {[1, 2, 3, 4, 5].map(i => (
-               <div key={i} className={cn(
-                 "w-6 h-6 rounded-full border-2 border-surface flex items-center justify-center",
-                 i < 4 ? "bg-primary text-white" : "bg-border text-text-secondary"
-               )}>
-                 <Check size={10} />
-               </div>
-             ))}
+           <div className="flex items-center gap-3">
+             <button 
+               onClick={() => onToggleStatus(med.id, med.status)}
+               className={cn(
+                 "flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all active:scale-95",
+                 isPaused ? "bg-primary/10 text-primary" : "bg-bg-main border border-border-main text-text-secondary hover:text-danger"
+               )}
+             >
+               {isPaused ? <Play size={14} fill="currentColor" /> : <Pause size={14} fill="currentColor" />}
+               <span className="text-[10px] font-black uppercase tracking-widest">
+                 {isPaused ? "Resume" : "Pause"}
+               </span>
+             </button>
            </div>
            <button className="flex items-center gap-1.5 text-primary hover:text-text-primary transition-colors">
              <span className="text-[10px] font-black uppercase tracking-widest">Details</span>
@@ -100,11 +110,29 @@ export default function Meds() {
   const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
   const [isCheckerOpen, setIsCheckerOpen] = useState(false);
 
+  const handleToggleStatus = async (id: string, currentStatus: string) => {
+    const { doc, updateDoc } = await import("firebase/firestore");
+    const { db } = await import("../lib/firebase");
+    try {
+      const newStatus = currentStatus === "paused" ? "active" : "paused";
+      await updateDoc(doc(db, "medications", id), {
+        status: newStatus,
+        updatedAt: new Date()
+      });
+    } catch (err) {
+      console.error("Toggle status error:", err);
+    }
+  };
+
   const colors = ["#3B82F6", "#00C896", "#FF7F50", "#7C3AED"];
   
-  const filteredMeds = medications.filter(m => 
-    m.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredMeds = medications.filter(m => {
+    const matchesSearch = m.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesTab = activeTab === "active" 
+      ? (m.status !== "paused") // Default to active if status is missing
+      : (m.status === "paused");
+    return matchesSearch && matchesTab;
+  });
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-24">
@@ -166,28 +194,28 @@ export default function Meds() {
       </header>
 
       <div className="space-y-4">
-        {activeTab === "active" ? (
-          filteredMeds.length > 0 ? (
-            filteredMeds.map((med, i) => (
-              <MedRow key={med.id || i} med={med} color={colors[i % colors.length]} />
-            ))
-          ) : (
-            <div className="py-20 flex flex-col items-center text-center space-y-4 opacity-40">
-               <div className="w-20 h-20 bg-border rounded-full flex items-center justify-center">
-                  <Activity size={32} />
-               </div>
-               <div className="space-y-1">
-                 <p className="font-bold">No Active Medications</p>
-                 <p className="text-xs">Tap the + button to add your first medicine.</p>
-               </div>
-            </div>
-          )
+        {filteredMeds.length > 0 ? (
+          filteredMeds.map((med, i) => (
+            <MedRow 
+              key={med.id || i} 
+              med={med} 
+              color={colors[i % colors.length]} 
+              onToggleStatus={handleToggleStatus}
+            />
+          ))
         ) : (
           <div className="py-20 flex flex-col items-center text-center space-y-4 opacity-40">
              <div className="w-20 h-20 bg-border rounded-full flex items-center justify-center">
-                <Pause size={32} />
+                {activeTab === "active" ? <Activity size={32} /> : <Pause size={32} />}
              </div>
-             <p className="font-bold">No Paused Medications</p>
+             <div className="space-y-1">
+               <p className="font-bold">No {activeTab} Medications</p>
+               <p className="text-xs">
+                 {activeTab === "active" 
+                   ? "Tap the + button to add your first medicine." 
+                   : "Paused medications will appear here."}
+               </p>
+             </div>
           </div>
         )}
       </div>

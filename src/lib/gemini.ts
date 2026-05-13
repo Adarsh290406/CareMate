@@ -175,13 +175,27 @@ export async function identifyPill(base64Image: string): Promise<any> {
  * Brand to Generic Converter
  */
 export async function convertDrugBrand(brandName: string): Promise<any> {
-  const prompt = `Convert the drug brand name "${brandName}" to its generic equivalent and composition. Return ONLY JSON.`;
+  const prompt = `Convert the drug brand name "${brandName}" to its generic equivalent and details.
+  Return ONLY JSON with these exact keys:
+  {
+    "brandName": "Original Brand",
+    "genericName": "Scientific/Generic Name",
+    "composition": "Chemical composition/Ingredients",
+    "usage": "Primary use case",
+    "alternatives": ["Generic Alternative 1", "Generic Alternative 2"]
+  }`;
   const res = await callAi("You are a clinical pharmacologist.", prompt);
   try {
     const jsonStr = res.text.match(/\{[\s\S]*\}/)?.[0];
     return JSON.parse(jsonStr || "{}");
   } catch (e) {
-    return { brandName, genericName: "Unknown" };
+    return { 
+      brandName, 
+      genericName: "Unknown", 
+      composition: "Details unavailable", 
+      usage: "Not found", 
+      alternatives: [] 
+    };
   }
 }
 
@@ -220,13 +234,26 @@ export async function simulateMissedDose(medName: string): Promise<any> {
  * Schedule Optimizer
  */
 export async function optimizeSchedule(meds: any[], lifestyle: any): Promise<any> {
-  const prompt = `Optimize schedule for ${JSON.stringify(meds)} based on lifestyle ${JSON.stringify(lifestyle)}. Return ONLY JSON.`;
+  const prompt = `Optimize the medication schedule for these medications: ${JSON.stringify(meds)} 
+  based on the patient's lifestyle: ${JSON.stringify(lifestyle)}.
+  Return ONLY JSON with these exact keys:
+  {
+    "changes": [
+      {
+        "medName": "Medication Name",
+        "oldTime": "Current Time",
+        "newTime": "Optimized Time",
+        "reason": "Why this time is better"
+      }
+    ],
+    "rationale": "General explanation of the optimization strategy"
+  }`;
   const res = await callAi("You are a chronotherapy expert.", prompt);
   try {
     const jsonStr = res.text.match(/\{[\s\S]*\}/)?.[0];
     return JSON.parse(jsonStr || "{}");
   } catch (e) {
-    return { changes: [], rationale: "Optimization offline." };
+    return { changes: [], rationale: "AI Optimization is currently unavailable. Please check your internet connection." };
   }
 }
 

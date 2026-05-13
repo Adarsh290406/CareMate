@@ -16,12 +16,37 @@ export default function ScheduleOptimizer() {
   const [loading, setLoading] = useState(false);
   const [suggestion, setSuggestion] = useState<any>(null);
   const [applied, setApplied] = useState(false);
+  
+  // Local lifestyle state for optimization session
+  const [lifestyle, setLifestyle] = useState({
+    wakeTime: profile?.lifestyle?.wakeTime || '06:00',
+    sleepTime: profile?.lifestyle?.sleepTime || '22:00',
+    workHours: profile?.lifestyle?.workHours || '9AM - 5PM'
+  });
+
+  // Sync with profile when it loads
+  React.useEffect(() => {
+    if (profile?.lifestyle) {
+      setLifestyle({
+        wakeTime: profile.lifestyle.wakeTime || '06:00',
+        sleepTime: profile.lifestyle.sleepTime || '22:00',
+        workHours: profile.lifestyle.workHours || '9AM - 5PM'
+      });
+    }
+  }, [profile]);
 
   const handleOptimize = async () => {
     if (loading) return;
     setLoading(true);
     try {
-      const res = await optimizeSchedule(medications, profile?.lifestyle);
+      // Save lifestyle update to firestore if user is logged in
+      if (user?.uid) {
+        await updateDoc(doc(db, "users", user.uid), {
+          lifestyle: lifestyle,
+          updatedAt: new Date()
+        });
+      }
+      const res = await optimizeSchedule(medications, lifestyle);
       setSuggestion(res);
     } catch (err) {
       console.error(err);
@@ -31,26 +56,38 @@ export default function ScheduleOptimizer() {
   };
 
   const applyOptimization = async () => {
-    if (!suggestion || !user?.uid) return;
+    if (!suggestion || !user?.uid || !suggestion.changes) return;
     setLoading(true);
     try {
-      // In a real app, we would update each medication's time
-      // For now, we simulate applying it
+      // Iterate through AI suggestions and update the corresponding medication records
+      for (const change of suggestion.changes) {
+        const med = medications.find(m => m.name.toLowerCase() === change.medName.toLowerCase());
+        if (med) {
+          // Update the medication document with the new optimized frequency/time
+          await updateDoc(doc(db, "medications", med.id), {
+            frequency: `Daily at ${change.newTime}`,
+            optimizedReason: change.reason,
+            lastOptimizationDate: new Date()
+          });
+        }
+      }
       setApplied(true);
+      // Optional: Add a success message or redirect
     } catch (err) {
-      console.error(err);
+      console.error("Optimization Apply Error:", err);
+      alert("Failed to apply some changes. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-dark-primary p-6 safe-area-bottom pb-32">
+    <div className="min-h-screen bg-bg-main p-6 safe-area-bottom pb-32">
       <header className="flex items-center justify-between mb-8">
-        <button onClick={() => navigate(-1)} className="p-2 bg-white/5 rounded-xl">
+        <button onClick={() => navigate(-1)} className="p-2 bg-surface-main border border-border-main rounded-xl text-text-primary hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
           <ChevronLeft size={24} />
         </button>
-        <h1 className="text-xl font-black italic uppercase tracking-tighter text-white">Schedule AI</h1>
+        <h1 className="text-xl font-black italic uppercase tracking-tighter text-text-primary">Schedule AI</h1>
         <div className="w-10" />
       </header>
 
@@ -59,26 +96,46 @@ export default function ScheduleOptimizer() {
           <div className="w-16 h-16 bg-ai/10 rounded-2xl flex items-center justify-center text-ai mx-auto mb-4">
             <Sparkles size={32} />
           </div>
-          <h2 className="text-2xl font-black tracking-tight uppercase italic text-white">Optimize Logic</h2>
+          <h2 className="text-2xl font-black tracking-tight uppercase italic text-text-primary">Optimize Logic</h2>
           <p className="text-text-secondary text-sm font-medium">
             AI aligns your medication times with your lifestyle for maximum adherence.
           </p>
         </section>
 
-        <div className="card p-6 border-white/5 bg-white/5 space-y-4">
-           <h3 className="text-[10px] font-black uppercase tracking-widest text-text-secondary">Current Lifestyle</h3>
-           <div className="grid grid-cols-2 gap-3">
-              <div className="p-3 bg-black/20 rounded-xl">
-                 <p className="text-[8px] font-black uppercase text-zinc-500">Wake Up</p>
-                 <p className="text-sm font-bold text-white">{profile?.lifestyle?.wakeTime || '06:00'}</p>
+        <div className="card p-6 border-border-main bg-surface-main space-y-4">
+           <div className="flex items-center justify-between mb-2">
+              <h3 className="text-[10px] font-black uppercase tracking-widest text-text-secondary">Your Lifestyle Context</h3>
+              <Zap size={14} className="text-ai" />
+           </div>
+           
+           <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                 <label className="text-[8px] font-black uppercase text-text-secondary opacity-60 ml-1">Wake Up Time</label>
+                 <input 
+                   type="time"
+                   value={lifestyle.wakeTime}
+                   onChange={e => setLifestyle({...lifestyle, wakeTime: e.target.value})}
+                   className="w-full p-3 bg-bg-main border border-border-main rounded-xl text-sm font-bold text-text-primary outline-none focus:border-ai transition-colors"
+                 />
               </div>
-              <div className="p-3 bg-black/20 rounded-xl">
-                 <p className="text-[8px] font-black uppercase text-zinc-500">Sleep</p>
-                 <p className="text-sm font-bold text-white">{profile?.lifestyle?.sleepTime || '22:00'}</p>
+              <div className="space-y-2">
+                 <label className="text-[8px] font-black uppercase text-text-secondary opacity-60 ml-1">Sleep Time</label>
+                 <input 
+                   type="time"
+                   value={lifestyle.sleepTime}
+                   onChange={e => setLifestyle({...lifestyle, sleepTime: e.target.value})}
+                   className="w-full p-3 bg-bg-main border border-border-main rounded-xl text-sm font-bold text-text-primary outline-none focus:border-ai transition-colors"
+                 />
               </div>
-              <div className="p-3 bg-black/20 rounded-xl col-span-2">
-                 <p className="text-[8px] font-black uppercase text-zinc-500">Work Hours</p>
-                 <p className="text-sm font-bold text-white">{profile?.lifestyle?.workHours || '9AM - 5PM'}</p>
+              <div className="space-y-2 col-span-2">
+                 <label className="text-[8px] font-black uppercase text-text-secondary opacity-60 ml-1">Work/Activity Hours</label>
+                 <input 
+                   type="text"
+                   placeholder="e.g. 9AM - 5PM"
+                   value={lifestyle.workHours}
+                   onChange={e => setLifestyle({...lifestyle, workHours: e.target.value})}
+                   className="w-full p-3 bg-bg-main border border-border-main rounded-xl text-sm font-bold text-text-primary outline-none focus:border-ai transition-colors"
+                 />
               </div>
            </div>
         </div>
@@ -87,7 +144,7 @@ export default function ScheduleOptimizer() {
           <button 
             onClick={handleOptimize}
             disabled={loading || medications.length === 0}
-            className="w-full h-16 bg-ai text-white rounded-2xl font-black uppercase tracking-[0.2em] shadow-xl shadow-ai/20 flex items-center justify-center gap-3"
+            className="w-full h-16 bg-ai text-black rounded-2xl font-black uppercase tracking-[0.2em] shadow-xl shadow-ai/20 flex items-center justify-center gap-3"
           >
             {loading ? <RefreshCcw size={20} className="animate-spin" /> : <Brain size={20} />}
             {loading ? "Analyzing..." : "Calculate Best Times"}
@@ -104,34 +161,40 @@ export default function ScheduleOptimizer() {
                       <Zap size={32} />
                    </div>
                    <div>
-                      <h3 className="text-xl font-black uppercase italic leading-none text-white">AI Optimization</h3>
+                      <h3 className="text-xl font-black uppercase italic leading-none text-text-primary">AI Optimization</h3>
                       <p className="text-[10px] font-black uppercase tracking-widest text-ai mt-1">Efficiency Boost: +40%</p>
                    </div>
                 </div>
 
                 <div className="space-y-3">
-                   {suggestion.changes.map((change: any, i: number) => (
-                     <div key={i} className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5">
-                        <div className="flex items-center gap-3">
-                           <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-xs font-bold text-white">
-                              {i + 1}
-                           </div>
-                           <div>
-                              <p className="text-xs font-bold text-white">{change.medName}</p>
-                              <p className="text-[9px] font-medium text-zinc-500">{change.reason}</p>
-                           </div>
-                        </div>
-                        <div className="text-right">
-                           <p className="text-[9px] font-black uppercase text-zinc-500 line-through">{change.oldTime}</p>
-                           <p className="text-sm font-black text-ai italic">{change.newTime}</p>
-                        </div>
+                   {suggestion.changes && suggestion.changes.length > 0 ? (
+                     suggestion.changes.map((change: any, i: number) => (
+                       <div key={i} className="flex items-center justify-between p-4 bg-surface-main rounded-2xl border border-border-main">
+                          <div className="flex items-center gap-3">
+                             <div className="w-8 h-8 rounded-lg bg-bg-main border border-border-main flex items-center justify-center text-xs font-bold text-text-primary">
+                                {i + 1}
+                             </div>
+                             <div>
+                                <p className="text-xs font-bold text-text-primary">{change.medName}</p>
+                                <p className="text-[9px] font-medium text-text-secondary opacity-60">{change.reason}</p>
+                             </div>
+                          </div>
+                          <div className="text-right">
+                             <p className="text-[9px] font-black uppercase text-text-secondary opacity-40 line-through">{change.oldTime}</p>
+                             <p className="text-sm font-black text-ai italic">{change.newTime}</p>
+                          </div>
+                       </div>
+                     ))
+                   ) : (
+                     <div className="p-4 bg-surface-main rounded-2xl border border-border-main text-center">
+                       <p className="text-xs font-bold text-text-secondary opacity-60">No schedule changes recommended.</p>
                      </div>
-                   ))}
+                   )}
                 </div>
 
-                <div className="p-4 bg-white/5 rounded-2xl border border-white/10">
+                <div className="p-4 bg-surface-main rounded-2xl border border-border-main">
                    <p className="text-[10px] font-black uppercase tracking-widest text-ai mb-2">AI Rationale</p>
-                   <p className="text-xs font-medium text-zinc-300 leading-relaxed italic">
+                   <p className="text-xs font-medium text-text-secondary leading-relaxed italic">
                      "{suggestion.rationale}"
                    </p>
                 </div>
@@ -142,7 +205,7 @@ export default function ScheduleOptimizer() {
                disabled={applied || loading}
                className={cn(
                  "w-full h-16 rounded-2xl font-black uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-2",
-                 applied ? "bg-safe text-white" : "bg-white text-black"
+                 applied ? "bg-safe text-white" : "bg-surface-main border border-border-main text-text-primary"
                )}
              >
                {applied ? <CheckCircle size={20} /> : null}
@@ -156,7 +219,7 @@ export default function ScheduleOptimizer() {
             <Info size={16} />
           </div>
           <div className="space-y-1">
-            <h4 className="text-xs font-bold text-white uppercase tracking-widest">Medical Note</h4>
+            <h4 className="text-xs font-bold text-text-primary uppercase tracking-widest">Medical Note</h4>
             <p className="text-[10px] text-text-secondary font-medium leading-relaxed">
               Optimization logic aims to group medications to avoid multiple alarms while ensuring safe buffers between doses.
             </p>

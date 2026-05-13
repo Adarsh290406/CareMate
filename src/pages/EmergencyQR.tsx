@@ -47,12 +47,12 @@ export default function EmergencyQR() {
   };
 
   return (
-    <div className="min-h-screen bg-dark-primary p-6 safe-area-bottom">
+    <div className="min-h-screen bg-bg-main p-6 safe-area-bottom">
       <header className="flex items-center justify-between mb-8">
-        <button onClick={() => navigate(-1)} className="p-2 bg-white/5 rounded-xl">
+        <button onClick={() => navigate(-1)} className="p-2 bg-surface-main border border-border-main rounded-xl text-text-primary hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
           <ChevronLeft size={24} />
         </button>
-        <h1 className="text-xl font-black italic uppercase tracking-tighter text-white">Emergency ID</h1>
+        <h1 className="text-xl font-black italic uppercase tracking-tighter text-text-primary">Emergency ID</h1>
         <div className="w-10" />
       </header>
 
@@ -61,7 +61,7 @@ export default function EmergencyQR() {
           <div className="w-16 h-16 bg-critical/10 rounded-full flex items-center justify-center text-critical mx-auto mb-4 animate-pulse">
             <Shield size={32} />
           </div>
-          <h2 className="text-2xl font-black tracking-tight text-white uppercase italic">Life-Saving Access</h2>
+          <h2 className="text-2xl font-black tracking-tight text-text-primary uppercase italic">Life-Saving Access</h2>
           <p className="text-text-secondary text-sm font-medium">
             Responders can scan this code to see your medical history and emergency contacts.
           </p>
@@ -106,18 +106,18 @@ export default function EmergencyQR() {
           </button>
           
           <button 
-            className="w-full h-16 bg-white/5 border border-white/10 text-white rounded-2xl font-black uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:bg-white/10 transition-all"
+            className="w-full h-16 bg-surface-main border border-border-main text-text-primary rounded-2xl font-black uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:bg-black/5 dark:hover:bg-white/5 transition-all"
           >
             <Camera size={20} /> Set as Lockscreen
           </button>
         </div>
 
-        <div className="p-6 bg-white/5 rounded-3xl border border-white/5 flex gap-4 items-start">
+        <div className="p-6 bg-surface-main rounded-3xl border border-border-main flex gap-4 items-start">
           <div className="p-2 bg-info/10 text-info rounded-lg mt-1">
             <Heart size={16} />
           </div>
           <div className="space-y-1">
-            <h4 className="text-xs font-bold text-white uppercase tracking-widest">Pro Tip</h4>
+            <h4 className="text-xs font-bold text-text-primary uppercase tracking-widest">Pro Tip</h4>
             <p className="text-[10px] text-text-secondary font-medium leading-relaxed">
               Set this image as your lockscreen wallpaper so paramedics can access it without unlocking your phone.
             </p>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import { useNavigate } from "react-router-dom";
 import { 
   MessageCircle, Bell, AlertTriangle, CheckCircle, Clock, 
   ChevronRight, User, Search, Plus, UserPlus, Pill, 
@@ -82,6 +83,7 @@ function PatientCard({ patient, onClick }: PatientCardProps) {
 }
 
 export default function CaregiverDashboard() {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const { patients, loading: patientsLoading } = useCaregiverPatients(user?.uid);
   const { alerts, loading: alertsLoading } = useAlerts(user?.uid);
@@ -105,7 +107,8 @@ export default function CaregiverDashboard() {
     if (!selectedPatient) return;
     setMedLoading(true);
     try {
-      const q = query(collection(db, "medications"), where("userId", "==", selectedPatient.uid));
+      // Use patientId as defined in the medications schema
+      const q = query(collection(db, "medications"), where("patientId", "==", selectedPatient.uid || selectedPatient.id));
       const snap = await getDocs(q);
       setPatientMeds(snap.docs.map(d => ({ id: d.id, ...d.data() })));
     } catch (err) {
@@ -116,24 +119,34 @@ export default function CaregiverDashboard() {
   };
 
   const linkPatient = async () => {
-    if (!searchEmail || !user) return;
+    const email = searchEmail.trim().toLowerCase();
+    if (!email || !user) return;
     setLinking(true);
     try {
-      const q = query(collection(db, "users"), where("email", "==", searchEmail.toLowerCase()), where("role", "==", "patient"));
+      // Search for patient with matching email. Role check is case-insensitive if possible, but standardizing on lowercase.
+      const q = query(collection(db, "users"), where("email", "==", email), where("role", "==", "patient"));
       const snap = await getDocs(q);
+      
       if (snap.empty) {
-        alert("Patient not found.");
+        alert("Patient not found. Please verify the email and ensure they are registered as a patient.");
         return;
       }
+
       const patientDoc = snap.docs[0];
-      await updateDoc(doc(db, "users", patientDoc.id), {
-        caregiverIds: arrayUnion(user.uid)
-      });
-      alert("Patient linked successfully!");
+      const patientId = patientDoc.id;
+
+      // Use setDoc with merge to ensure the document exists
+      const { setDoc } = await import("firebase/firestore");
+      await setDoc(doc(db, "users", user.uid), {
+        patientIds: arrayUnion(patientId)
+      }, { merge: true });
+
+      alert(`Successfully linked with ${patientDoc.data().name}!`);
       setSearchEmail("");
       setShowAddPatient(false);
     } catch (err) {
-      console.error(err);
+      console.error("Link Error:", err);
+      alert("An error occurred while linking. Please try again.");
     } finally {
       setLinking(false);
     }
@@ -162,6 +175,8 @@ export default function CaregiverDashboard() {
      }
   };
 
+  const [activeDetailTab, setActiveDetailTab] = useState("overview");
+
   return (
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-12">
       <header className="flex items-center justify-between">
@@ -187,22 +202,29 @@ export default function CaregiverDashboard() {
             <h3 className="font-bold text-text-primary uppercase italic tracking-tight">Connect with Patient</h3>
             <p className="text-[10px] text-text-secondary font-bold uppercase tracking-widest">Link using patient's email address.</p>
           </div>
-          <div className="flex gap-2">
+          <form 
+            onSubmit={(e) => {
+              e.preventDefault();
+              linkPatient();
+            }}
+            className="flex gap-2"
+          >
             <input 
-              type="email"
+              autoFocus
+              type="text"
               value={searchEmail}
               onChange={(e) => setSearchEmail(e.target.value)}
               placeholder="patient@example.com"
               className="flex-1 bg-bg-main border border-border-main rounded-xl px-4 py-3 text-sm text-text-primary focus:outline-none focus:border-primary"
             />
             <button 
-              onClick={linkPatient}
-              disabled={linking || !searchEmail}
-              className="bg-primary text-black px-6 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-lg shadow-primary/10"
+              type="submit"
+              disabled={linking || !searchEmail.trim()}
+              className="bg-primary text-black px-6 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all shadow-lg shadow-primary/10 disabled:opacity-50"
             >
-              {linking ? "..." : "Link"}
+              {linking ? "Linking..." : "Link"}
             </button>
-          </div>
+          </form>
         </motion.div>
       )}
 
@@ -248,89 +270,187 @@ export default function CaregiverDashboard() {
                  </div>
 
                  <div className="flex-1 overflow-y-auto p-8 pt-0 space-y-8 no-scrollbar">
-                    {/* Stats */}
-                    <div className="grid grid-cols-3 gap-3">
-                       <div className="p-4 bg-bg-main border border-border-main rounded-2xl text-center space-y-1">
-                          <p className="text-[8px] font-black uppercase text-text-secondary">Adherence</p>
-                          <p className="text-xl font-black text-safe">94%</p>
-                       </div>
-                       <div className="p-4 bg-bg-main border border-border-main rounded-2xl text-center space-y-1">
-                          <p className="text-[8px] font-black uppercase text-text-secondary">Alerts</p>
-                          <p className="text-xl font-black text-warning">1</p>
-                       </div>
-                       <div className="p-4 bg-bg-main border border-border-main rounded-2xl text-center space-y-1">
-                          <p className="text-[8px] font-black uppercase text-text-secondary">Risk</p>
-                          <p className="text-xl font-black text-primary">Low</p>
-                       </div>
-                    </div>
+                    {activeDetailTab === "overview" && (
+                      <motion.div 
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="space-y-8"
+                      >
+                        {/* Stats */}
+                        <div className="grid grid-cols-3 gap-3">
+                           <div className="p-4 bg-bg-main border border-border-main rounded-2xl text-center space-y-1">
+                              <p className="text-[8px] font-black uppercase text-text-secondary">Adherence</p>
+                              <p className="text-xl font-black text-safe">94%</p>
+                           </div>
+                           <div className="p-4 bg-bg-main border border-border-main rounded-2xl text-center space-y-1">
+                              <p className="text-[8px] font-black uppercase text-text-secondary">Alerts</p>
+                              <p className="text-xl font-black text-warning">1</p>
+                           </div>
+                           <div className="p-4 bg-bg-main border border-border-main rounded-2xl text-center space-y-1">
+                              <p className="text-[8px] font-black uppercase text-text-secondary">Risk</p>
+                              <p className="text-xl font-black text-primary">Low</p>
+                           </div>
+                        </div>
 
-                    {/* Medications Section */}
-                    <div className="space-y-4">
-                       <div className="flex items-center justify-between">
-                          <h4 className="text-[10px] font-black uppercase tracking-widest text-text-secondary">Remote Medication List</h4>
-                          <button className="flex items-center gap-2 text-[10px] font-black uppercase text-primary px-3 py-1.5 bg-primary/10 rounded-xl">
-                             <Plus size={12} /> Add New
-                          </button>
-                       </div>
+                        {/* Medications Section */}
+                        <div className="space-y-4">
+                           <div className="flex items-center justify-between">
+                              <h4 className="text-[10px] font-black uppercase tracking-widest text-text-secondary">Remote Medication List</h4>
+                              <button className="flex items-center gap-2 text-[10px] font-black uppercase text-primary px-3 py-1.5 bg-primary/10 rounded-xl">
+                                 <Plus size={12} /> Add New
+                              </button>
+                           </div>
 
-                       {medLoading ? (
-                         <div className="py-12 text-center text-[10px] font-black uppercase tracking-widest text-text-secondary">Fetching live data...</div>
-                       ) : (
-                         <div className="space-y-3">
-                            {patientMeds.map(med => (
-                               <div key={med.id} className="p-5 bg-bg-main rounded-3xl border border-border-main flex items-center justify-between">
-                                  <div className="flex items-center gap-4">
-                                     <div className="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center text-primary">
-                                        <Pill size={20} />
-                                     </div>
-                                     <div>
-                                        <p className="text-sm font-black text-text-primary">{med.name} <span className="text-text-secondary font-bold ml-2 text-xs">{med.dosage}</span></p>
-                                        <div className="flex items-center gap-2 mt-0.5">
-                                           <Clock size={10} className="text-text-secondary" />
-                                           <span className="text-[10px] font-bold text-text-secondary">{med.frequency}</span>
-                                        </div>
-                                     </div>
-                                  </div>
-                                  <div className="flex items-center gap-2">
-                                     <button 
-                                       onClick={() => setEditingMed(med)}
-                                       className="p-2.5 rounded-xl bg-bg-main text-text-secondary hover:text-text-primary"
-                                     >
-                                        <Edit3 size={16} />
-                                     </button>
-                                     <button 
-                                       onClick={() => handleDeleteMed(med.id)}
-                                       className="p-2.5 rounded-xl bg-bg-main text-text-secondary hover:text-danger"
-                                     >
-                                        <Trash2 size={16} />
-                                     </button>
-                                  </div>
-                               </div>
-                            ))}
+                           {medLoading ? (
+                             <div className="py-12 text-center text-[10px] font-black uppercase tracking-widest text-text-secondary">Fetching live data...</div>
+                           ) : (
+                             <div className="space-y-3">
+                                {patientMeds.map(med => (
+                                   <div key={med.id} className="p-5 bg-bg-main rounded-3xl border border-border-main flex items-center justify-between">
+                                      <div className="flex items-center gap-4">
+                                         <div className="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center text-primary">
+                                            <Pill size={20} />
+                                         </div>
+                                         <div>
+                                            <p className="text-sm font-black text-text-primary">{med.name} <span className="text-text-secondary font-bold ml-2 text-xs">{med.dosage}</span></p>
+                                            <div className="flex items-center gap-2 mt-0.5">
+                                               <Clock size={10} className="text-text-secondary" />
+                                               <span className="text-[10px] font-bold text-text-secondary">{med.frequency}</span>
+                                            </div>
+                                         </div>
+                                      </div>
+                                      <div className="flex items-center gap-2">
+                                         <button 
+                                           onClick={() => setEditingMed(med)}
+                                           className="p-2.5 rounded-xl bg-bg-main text-text-secondary hover:text-text-primary"
+                                         >
+                                            <Edit3 size={16} />
+                                         </button>
+                                         <button 
+                                           onClick={() => handleDeleteMed(med.id)}
+                                           className="p-2.5 rounded-xl bg-bg-main text-text-secondary hover:text-danger"
+                                         >
+                                            <Trash2 size={16} />
+                                         </button>
+                                      </div>
+                                   </div>
+                                ))}
+                             </div>
+                           )}
+                        </div>
+
+                        {/* AI Surveillance Briefing */}
+                        <div className="p-6 bg-ai/5 border border-ai/10 rounded-3xl space-y-4">
+                           <div className="flex items-center gap-2 text-ai">
+                              <Brain size={18} />
+                              <h4 className="text-[10px] font-black uppercase tracking-widest">Caregiver Intelligence</h4>
+                           </div>
+                           <p className="text-xs font-medium text-text-secondary opacity-80 leading-relaxed italic">
+                             "The patient is currently on a stable adherence trend. No missed doses detected in the last 48 hours. Consider suggesting a schedule adjustment if they mention afternoon fatigue."
+                           </p>
+                        </div>
+                      </motion.div>
+                    )}
+
+                    {activeDetailTab === "video" && (
+                      <motion.div 
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="aspect-video bg-black rounded-[32px] relative overflow-hidden group"
+                      >
+                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                         <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center animate-pulse">
+                               <Video size={40} className="text-primary" />
+                            </div>
                          </div>
-                       )}
-                    </div>
+                         <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                               <div className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center">
+                                  <User size={20} className="text-white" />
+                               </div>
+                               <div>
+                                  <p className="text-xs font-black text-white">{selectedPatient.name}</p>
+                                  <p className="text-[8px] font-black text-primary uppercase tracking-widest">Connecting...</p>
+                               </div>
+                            </div>
+                            <button 
+                              onClick={() => setActiveDetailTab("overview")}
+                              className="px-6 py-2 bg-danger text-white rounded-full text-[10px] font-black uppercase tracking-widest"
+                            >
+                               End Call
+                            </button>
+                         </div>
+                      </motion.div>
+                    )}
 
-                    {/* AI Surveillance Briefing */}
-                    <div className="p-6 bg-ai/5 border border-ai/10 rounded-3xl space-y-4">
-                       <div className="flex items-center gap-2 text-ai">
-                          <Brain size={18} />
-                          <h4 className="text-[10px] font-black uppercase tracking-widest">Caregiver Intelligence</h4>
-                       </div>
-                       <p className="text-xs font-medium text-text-secondary opacity-80 leading-relaxed italic">
-                         "The patient is currently on a stable adherence trend. No missed doses detected in the last 48 hours. Consider suggesting a schedule adjustment if they mention afternoon fatigue."
-                       </p>
-                    </div>
+                    {activeDetailTab === "analytics" && (
+                      <motion.div 
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className="space-y-6"
+                      >
+                         <div className="p-6 bg-surface-main border border-border-main rounded-3xl space-y-6">
+                            <div className="flex items-center justify-between">
+                               <h4 className="text-[10px] font-black uppercase tracking-widest text-text-secondary">Weekly Adherence</h4>
+                               <TrendingUp size={16} className="text-safe" />
+                            </div>
+                            <div className="h-40 flex items-end justify-between gap-2 px-2">
+                               {[65, 80, 45, 90, 100, 85, 95].map((h, i) => (
+                                 <div key={i} className="flex-1 space-y-2">
+                                    <motion.div 
+                                      initial={{ height: 0 }}
+                                      animate={{ height: `${h}%` }}
+                                      className={cn("w-full rounded-t-lg transition-all", h > 80 ? "bg-safe" : h > 60 ? "bg-primary" : "bg-warning")}
+                                    />
+                                    <p className="text-[8px] font-black text-center text-text-secondary opacity-40">D{i+1}</p>
+                                 </div>
+                               ))}
+                            </div>
+                         </div>
+                         <div className="grid grid-cols-2 gap-4">
+                            <div className="p-4 bg-bg-main border border-border-main rounded-2xl">
+                               <p className="text-[8px] font-black uppercase text-text-secondary opacity-60">Avg. Delay</p>
+                               <p className="text-lg font-black text-text-primary">12 min</p>
+                            </div>
+                            <div className="p-4 bg-bg-main border border-border-main rounded-2xl">
+                               <p className="text-[8px] font-black uppercase text-text-secondary opacity-60">Missed Doses</p>
+                               <p className="text-lg font-black text-warning">2</p>
+                            </div>
+                         </div>
+                      </motion.div>
+                    )}
                  </div>
 
                  <div className="p-8 border-t border-border-main bg-bg-main flex gap-3">
-                    <button className="flex-1 py-4 bg-surface-main border border-border-main text-text-primary rounded-2xl font-black uppercase text-[9px] tracking-widest hover:bg-white/10 transition-all flex items-center justify-center gap-2">
+                    <button 
+                      onClick={() => {
+                        setActiveDetailTab("overview");
+                        navigate(`/family-chat/${selectedPatient.uid}`);
+                      }}
+                      className={cn(
+                        "flex-1 py-4 border rounded-2xl font-black uppercase text-[9px] tracking-widest transition-all flex items-center justify-center gap-2",
+                        activeDetailTab === "overview" ? "bg-surface-main border-border-main text-text-primary" : "bg-transparent border-transparent text-text-secondary"
+                      )}
+                    >
                        <MessageCircle size={14} /> Chat
                     </button>
-                    <button className="flex-1 py-4 bg-primary text-black rounded-2xl font-black uppercase text-[9px] tracking-widest shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2">
+                    <button 
+                      onClick={() => setActiveDetailTab("video")}
+                      className={cn(
+                        "flex-1 py-4 rounded-2xl font-black uppercase text-[9px] tracking-widest shadow-lg transition-all flex items-center justify-center gap-2",
+                        activeDetailTab === "video" ? "bg-primary text-black shadow-primary/20" : "bg-transparent text-text-secondary"
+                      )}
+                    >
                        <Video size={14} /> Video
                     </button>
-                    <button className="flex-1 py-4 bg-surface-main text-text-primary border border-border-main rounded-2xl font-black uppercase text-[9px] tracking-widest hover:bg-primary/5 transition-all flex items-center justify-center gap-2">
+                    <button 
+                      onClick={() => setActiveDetailTab("analytics")}
+                      className={cn(
+                        "flex-1 py-4 border rounded-2xl font-black uppercase text-[9px] tracking-widest transition-all flex items-center justify-center gap-2",
+                        activeDetailTab === "analytics" ? "bg-surface-main border-border-main text-text-primary" : "bg-transparent border-transparent text-text-secondary"
+                      )}
+                    >
                        <TrendingUp size={14} /> Analytics
                     </button>
                  </div>

@@ -27,12 +27,12 @@ export default function Encyclopedia() {
   const trendingMeds = ["Metformin", "Atorvastatin", "Lisinopril", "Levothyroxine", "Amlodipine"];
 
   return (
-    <div className="min-h-screen bg-dark-primary p-6 safe-area-bottom pb-32">
+    <div className="min-h-screen bg-bg-main p-6 safe-area-bottom pb-32">
       <header className="flex items-center justify-between mb-8">
-        <button onClick={() => navigate(-1)} className="p-2 bg-white/5 rounded-xl">
+        <button onClick={() => navigate(-1)} className="p-2 bg-surface-main border border-border-main rounded-xl text-text-primary hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
           <ChevronLeft size={24} />
         </button>
-        <h1 className="text-xl font-black italic uppercase tracking-tighter text-white">Med Encyclopedia</h1>
+        <h1 className="text-xl font-black italic uppercase tracking-tighter text-text-primary">Med Encyclopedia</h1>
         <div className="w-10" />
       </header>
 
@@ -41,7 +41,7 @@ export default function Encyclopedia() {
           <div className="w-16 h-16 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-500 mx-auto mb-4">
             <Book size={32} />
           </div>
-          <h2 className="text-2xl font-black tracking-tight uppercase italic text-white">Smart Drug Library</h2>
+          <h2 className="text-2xl font-black tracking-tight uppercase italic text-text-primary">Smart Drug Library</h2>
           <p className="text-text-secondary text-sm font-medium">
             Simplified medical knowledge powered by CareMate AI.
           </p>
@@ -56,7 +56,7 @@ export default function Encyclopedia() {
             placeholder="Search medication name..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="w-full h-16 bg-surface border border-border rounded-2xl pl-14 pr-6 font-bold text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all outline-none"
+            className="w-full h-16 bg-surface-main border border-border-main rounded-2xl pl-14 pr-6 font-bold text-text-primary placeholder:text-text-secondary/50 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all outline-none"
             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
           />
           <button 
@@ -76,7 +76,7 @@ export default function Encyclopedia() {
                   <button 
                     key={med}
                     onClick={() => { setQuery(med); handleSearch(); }}
-                    className="px-4 py-2 bg-white/5 border border-white/5 rounded-xl text-xs font-bold text-white hover:bg-white/10 transition-all flex items-center gap-2"
+                    className="px-4 py-2 bg-surface-main border border-border-main rounded-xl text-xs font-bold text-text-primary hover:bg-black/5 dark:hover:bg-white/5 transition-all flex items-center gap-2"
                   >
                     <Search size={12} className="opacity-40" /> {med}
                   </button>
@@ -99,7 +99,7 @@ export default function Encyclopedia() {
                            <Heart size={32} />
                         </div>
                         <div>
-                           <h3 className="text-2xl font-black uppercase italic text-white">{result.name}</h3>
+                           <h3 className="text-2xl font-black uppercase italic text-text-primary">{result.name}</h3>
                            <p className="text-[10px] font-black uppercase tracking-widest text-blue-500">Clinical Overview</p>
                         </div>
                      </div>
@@ -107,29 +107,29 @@ export default function Encyclopedia() {
 
                   <div className="space-y-4">
                      <div className="space-y-1">
-                        <p className="text-[9px] font-black uppercase tracking-widest opacity-40">General Description</p>
-                        <p className="text-sm font-medium leading-relaxed text-zinc-300">{result.generalDescription}</p>
+                        <p className="text-[9px] font-black uppercase tracking-widest opacity-40 text-text-secondary">General Description</p>
+                        <p className="text-sm font-medium leading-relaxed text-text-secondary">{result.generalDescription}</p>
                      </div>
                      <div className="space-y-1">
-                        <p className="text-[9px] font-black uppercase tracking-widest opacity-40">Common Uses</p>
-                        <p className="text-sm font-medium leading-relaxed text-zinc-300">{result.commonUses}</p>
+                        <p className="text-[9px] font-black uppercase tracking-widest opacity-40 text-text-secondary">Common Uses</p>
+                        <p className="text-sm font-medium leading-relaxed text-text-secondary">{result.commonUses}</p>
                      </div>
                   </div>
 
                   <div className="grid grid-cols-1 gap-4">
-                     <div className="p-4 bg-white/5 rounded-2xl border border-white/5 space-y-2">
+                     <div className="p-4 bg-surface-main rounded-2xl border border-border-main space-y-2">
                         <div className="flex items-center gap-2 text-danger">
                            <Info size={14} />
                            <p className="text-[10px] font-black uppercase tracking-widest">Side Effects</p>
                         </div>
-                        <p className="text-xs text-zinc-400 font-medium leading-relaxed">{result.sideEffects}</p>
+                        <p className="text-xs text-text-secondary font-medium leading-relaxed">{result.sideEffects}</p>
                      </div>
-                     <div className="p-4 bg-white/5 rounded-2xl border border-white/5 space-y-2">
+                     <div className="p-4 bg-surface-main rounded-2xl border border-border-main space-y-2">
                         <div className="flex items-center gap-2 text-warning">
                            <Shield size={14} />
                            <p className="text-[10px] font-black uppercase tracking-widest">Precautions</p>
                         </div>
-                        <p className="text-xs text-zinc-400 font-medium leading-relaxed">{result.precautions}</p>
+                        <p className="text-xs text-text-secondary font-medium leading-relaxed">{result.precautions}</p>
                      </div>
                   </div>
 
@@ -140,10 +140,10 @@ export default function Encyclopedia() {
                </div>
 
                <div className="flex gap-3">
-                  <button className="flex-1 h-14 bg-white/5 rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2">
+                  <button className="flex-1 h-14 bg-surface-main border border-border-main rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 text-text-primary hover:bg-black/5 dark:hover:bg-white/5 transition-all">
                      <Book size={16} /> Save to Library
                   </button>
-                  <button onClick={() => navigate('/chat')} className="flex-1 h-14 bg-primary text-white rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2">
+                  <button onClick={() => navigate('/chat')} className="flex-1 h-14 bg-primary text-black rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2">
                      <Sparkles size={16} /> Consult AI
                   </button>
                </div>

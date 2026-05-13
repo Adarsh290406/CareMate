@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { AuthProvider, useAuth } from "./hooks/useAuth";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
@@ -24,6 +24,7 @@ import PrescriptionOCR from "./pages/PrescriptionOCR";
 import DrugConverter from "./pages/DrugConverter";
 import FamilyCircle from "./pages/FamilyCircle";
 import FamilyChat from "./pages/FamilyChat";
+import DosageHistory from "./pages/DosageHistory";
 import { motion, AnimatePresence } from "motion/react";
 import MainLayout from "./components/MainLayout";
 import { Heart } from "lucide-react";
@@ -100,9 +101,10 @@ function RouteGuard({ children, roles }: { children: React.ReactNode, roles?: st
 
 
 function MainRoutes() {
+  const location = useLocation();
   return (
     <AnimatePresence mode="wait">
-      <Routes>
+      <Routes location={location} key={location.pathname}>
         <Route path="/login" element={<Login />} />
         
         <Route path="/patient" element={
@@ -139,6 +141,7 @@ function MainRoutes() {
         <Route path="/convert-drug" element={<RouteGuard roles={["patient"]}><DrugConverter /></RouteGuard>} />
         <Route path="/family-circle" element={<RouteGuard roles={["patient", "caregiver"]}><FamilyCircle /></RouteGuard>} />
         <Route path="/family-chat/:memberId" element={<RouteGuard roles={["patient", "caregiver"]}><FamilyChat /></RouteGuard>} />
+        <Route path="/dosage-history" element={<RouteGuard><DosageHistory /></RouteGuard>} />
         
         {/* Public Emergency Route */}
         <Route path="/emergency-profile/:patientId" element={<EmergencyProfile />} />

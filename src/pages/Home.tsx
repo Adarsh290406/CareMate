@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { 
   Activity, Clock, ChevronRight, Sparkles, TrendingUp, Brain, AlertCircle, Zap, ShieldAlert, 
-  FileText, HelpCircle, X, Check, MapPin, ShoppingCart, Package, Info, Bell
+  FileText, HelpCircle, X, Check, MapPin, ShoppingCart, Package, Info, Bell, MessageSquare
 } from "lucide-react";
 import { cn } from "../lib/utils";
 import { useAuth } from "../hooks/useAuth";
@@ -17,6 +17,8 @@ import { useRiskScore } from "../hooks/useRiskScore";
 import PillReminderOverlay from "../components/PillReminderOverlay";
 import { generateSOSSummary, explainAnomaly, generateDoctorReport, callAi } from "../lib/gemini";
 import { jsPDF } from "jspdf";
+import { useNavigate } from "react-router-dom";
+import { usePatientCaregivers } from "../hooks/usePatientCaregivers";
 
 export default function Home() {
   const { user, profile } = useAuth();
@@ -45,6 +47,9 @@ export default function Home() {
   const [anomalyExplanation, setAnomalyExplanation] = useState("");
   const [loadingAnomaly, setLoadingAnomaly] = useState(false);
   const [showAnomaly, setShowAnomaly] = useState(false);
+
+  const { caregivers, loading: caregiversLoading } = usePatientCaregivers(user?.uid);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (user?.uid) {
@@ -287,10 +292,10 @@ export default function Home() {
       <header className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-black italic tracking-tighter uppercase leading-none">
+            <h1 className="text-3xl font-black italic tracking-tighter uppercase leading-none text-text-primary">
               Hello, {profile?.name?.split(' ')[0] || 'User'}
             </h1>
-            <p className="text-[10px] font-black uppercase tracking-widest text-[var(--text-secondary)]">
+            <p className="text-[10px] font-black uppercase tracking-widest text-text-secondary">
               {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
             </p>
           </div>
@@ -300,7 +305,7 @@ export default function Home() {
               onClick={toggleVoice}
               className={cn(
                 "w-12 h-12 rounded-2xl flex items-center justify-center transition-all border",
-                isListening ? "bg-danger text-white border-danger shadow-lg shadow-danger/20 animate-pulse" : "bg-surface border-border text-text-muted hover:text-white"
+                isListening ? "bg-danger text-white border-danger shadow-lg shadow-danger/20 animate-pulse" : "bg-surface-main border-border-main text-text-secondary hover:text-text-primary"
               )}
             >
               <Brain size={24} />
@@ -320,7 +325,7 @@ export default function Home() {
             </div>
             <div className="flex-1">
               <p className="text-[10px] font-black uppercase tracking-widest text-warning">AI Predictive Alert</p>
-              <p className="text-sm font-bold text-white">{prediction.prediction}</p>
+              <p className="text-sm font-bold text-text-primary">{prediction.prediction}</p>
             </div>
             <button className="p-2 hover:bg-white/5 rounded-full" onClick={() => setPrediction(null)}>
               <X size={16} className="text-text-secondary" />
@@ -338,10 +343,10 @@ export default function Home() {
                 <span className="text-[10px] font-black uppercase tracking-widest text-primary">Healthy</span>
               </div>
               <div className="flex items-end gap-1">
-                <span className="text-3xl font-black tracking-tighter italic leading-none">{healthScore}</span>
-                <span className="text-xs font-bold text-text-muted mb-1">/100</span>
+                <span className="text-3xl font-black tracking-tighter italic leading-none text-text-primary">{healthScore}</span>
+                <span className="text-xs font-bold text-text-secondary mb-1">/100</span>
               </div>
-              <p className="text-[9px] font-black uppercase tracking-widest opacity-40">Overall Health Score</p>
+              <p className="text-[9px] font-black uppercase tracking-widest opacity-40 text-text-secondary">Overall Health Score</p>
               {healthScore < 80 && (
                 <button 
                   onClick={fetchAnomalyExplanation}
@@ -352,18 +357,18 @@ export default function Home() {
                 </button>
               )}
            </div>
-           <div className="card p-5 bg-gradient-to-br from-success/10 to-transparent border-success/20 space-y-2">
+           <div className="card p-5 bg-gradient-to-br from-safe/10 to-transparent border-safe/20 space-y-2">
               <div className="flex items-center justify-between">
-                <div className="w-8 h-8 rounded-xl bg-success/20 flex items-center justify-center text-success">
+                <div className="w-8 h-8 rounded-xl bg-safe/20 flex items-center justify-center text-safe">
                   <TrendingUp size={18} />
                 </div>
-                <span className="text-[10px] font-black uppercase tracking-widest text-success">Streak</span>
+                <span className="text-[10px] font-black uppercase tracking-widest text-safe">Streak</span>
               </div>
               <div className="flex items-end gap-1">
-                <span className="text-3xl font-black tracking-tighter italic leading-none">{streakCount}</span>
-                <span className="text-xs font-bold text-text-muted mb-1">DAYS</span>
+                <span className="text-3xl font-black tracking-tighter italic leading-none text-text-primary">{streakCount}</span>
+                <span className="text-xs font-bold text-text-secondary mb-1 uppercase">Days</span>
               </div>
-              <p className="text-[9px] font-black uppercase tracking-widest opacity-40">Adherence Mastery</p>
+              <p className="text-[9px] font-black uppercase tracking-widest opacity-40 text-text-secondary">Adherence Mastery</p>
            </div>
         </div>
 
@@ -378,14 +383,46 @@ export default function Home() {
                  <h4 className="text-[10px] font-black uppercase tracking-widest text-ai mb-1">CareMate AI Briefing</h4>
                  <p className={cn(
                    "text-sm font-medium leading-snug line-clamp-2",
-                   loadingInsight ? "animate-pulse italic text-text-muted" : "text-white"
+                   loadingInsight ? "animate-pulse italic text-text-secondary" : "text-text-primary"
                  )}>
                    {insight || "Analyzing your clinical data for today's briefing..."}
                  </p>
               </div>
-              <ChevronRight size={20} className="text-text-muted group-hover:translate-x-1 transition-transform" />
+              <ChevronRight size={20} className="text-text-secondary group-hover:translate-x-1 transition-transform" />
            </div>
         </div>
+
+        {/* Care Circle Support */}
+        {!caregiversLoading && caregivers.length > 0 && (
+          <div className="space-y-3">
+             <div className="flex items-center justify-between px-2">
+                <h4 className="text-[10px] font-black uppercase tracking-widest text-text-secondary">Your Care Support</h4>
+                <div className="flex items-center gap-1.5 text-[9px] font-black uppercase text-safe">
+                   <div className="w-1.5 h-1.5 bg-safe rounded-full animate-pulse" />
+                   {caregivers.length} Active
+                </div>
+             </div>
+             <div className="flex gap-3 overflow-x-auto no-scrollbar pb-1">
+                {caregivers.map((cg) => (
+                  <button 
+                    key={cg.uid}
+                    onClick={() => navigate(`/family-chat/${cg.uid}`)}
+                    className="shrink-0 flex items-center gap-3 bg-surface-main border border-border-main rounded-2xl p-3 pr-5 hover:border-primary/30 transition-all active:scale-95"
+                  >
+                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-black">
+                      {cg.name?.[0] || "C"}
+                    </div>
+                    <div className="text-left">
+                      <p className="text-[12px] font-black text-text-primary leading-none mb-1">{cg.name}</p>
+                      <p className="text-[9px] font-bold text-primary uppercase tracking-widest flex items-center gap-1">
+                        <MessageSquare size={10} /> Chat Now
+                      </p>
+                    </div>
+                  </button>
+                ))}
+             </div>
+          </div>
+        )}
       </header>
       
       {/* Zone A: SOS & Quick Actions */}
@@ -802,40 +839,7 @@ export default function Home() {
           </div>
         )}
       </AnimatePresence>
-
-      <PillReminderOverlay doses={doses} onMarkTaken={markTaken} />
-
-      <AnimatePresence>
-          {showAnomaly && (
-            <div className="fixed inset-0 z-[110] flex items-center justify-center p-6 bg-black/80 backdrop-blur-sm">
-               <motion.div 
-                 initial={{ scale: 0.9, opacity: 0 }}
-                 animate={{ scale: 1, opacity: 1 }}
-                 exit={{ scale: 0.9, opacity: 0 }}
-                 className="bg-surface border border-danger/20 w-full max-w-sm rounded-[32px] p-8 space-y-6 shadow-2xl"
-               >
-                  <div className="flex items-center gap-4">
-                     <div className="w-14 h-14 rounded-2xl bg-danger/20 text-danger flex items-center justify-center">
-                        <ShieldAlert size={32} />
-                     </div>
-                     <div>
-                        <h3 className="text-xl font-black uppercase italic leading-none text-white">Anomaly Analysis</h3>
-                        <p className="text-[10px] font-black uppercase tracking-widest text-danger mt-1">AI Root Cause Search</p>
-                     </div>
-                  </div>
-                  <p className="text-sm font-medium leading-relaxed text-zinc-300">
-                    {anomalyExplanation}
-                  </p>
-                  <button 
-                    onClick={() => setShowAnomaly(false)}
-                    className="w-full h-14 bg-white/5 rounded-2xl text-[10px] font-black uppercase tracking-widest"
-                  >
-                    Got it
-                  </button>
-               </motion.div>
-            </div>
-          )}
-      </AnimatePresence>
+      <PillReminderOverlay />
     </div>
   );
 }

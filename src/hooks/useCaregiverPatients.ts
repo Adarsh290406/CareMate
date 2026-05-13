@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { collection, query, where, onSnapshot } from "firebase/firestore";
+import { collection, query, where, onSnapshot, doc, getDocs, documentId } from "firebase/firestore";
 import { db } from "../lib/firebase";
 
 export function useCaregiverPatients(caregiverId: string | undefined) {
@@ -9,22 +9,36 @@ export function useCaregiverPatients(caregiverId: string | undefined) {
   useEffect(() => {
     if (!caregiverId) return;
 
-    // Fetch patients where this caregiver's ID is in their caregiverIds array
-    const q = query(
-      collection(db, "users"),
-      where("caregiverIds", "array-contains", caregiverId)
-    );
+    // Listen to caregiver's linked IDs
+    const caregiverRef = doc(db, "users", caregiverId);
+    
+    const unsubscribe = onSnapshot(caregiverRef, async (snap) => {
+      if (!snap.exists()) {
+        setPatients([]);
+        setLoading(false);
+        return;
+      }
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const docs = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      setPatients(docs);
-      setLoading(false);
-    }, (error) => {
-      console.error("Caregiver patients fetch error:", error);
-      setLoading(false);
+      const ids = snap.data()?.patientIds || [];
+      if (ids.length === 0) {
+        setPatients([]);
+        setLoading(false);
+        return;
+      }
+
+      try {
+        // Fetch detailed info for these IDs
+        const q = query(collection(db, "users"), where(documentId(), "in", ids));
+        const pSnap = await getDocs(q);
+        setPatients(pSnap.docs.map(d => ({
+          uid: d.id,
+          ...d.data()
+        })));
+      } catch (err) {
+        console.error("Patient fetch err:", err);
+      } finally {
+        setLoading(false);
+      }
     });
 
     return () => unsubscribe();

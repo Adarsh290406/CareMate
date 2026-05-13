@@ -26,10 +26,12 @@ export function useAlerts(patientId: string | undefined) {
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const docs = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })) as Alert[];
+      const docs = snapshot.docs
+        .map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }))
+        .filter((a: any) => a.type !== "chat_message") as Alert[];
       
       // Sort in memory
       docs.sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0));

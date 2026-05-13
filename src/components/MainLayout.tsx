@@ -163,12 +163,22 @@ export default function MainLayout({ children }: MainLayoutProps) {
         "fixed top-0 left-0 right-0 h-16 px-4 sm:px-6 flex items-center justify-between z-[60] transition-all duration-300",
         scrolled || showInstall ? "bg-surface-main/95 backdrop-blur-xl border-b border-border-main shadow-2xl shadow-primary/5" : "bg-transparent"
       )}>
-        <Link to="/" className="flex items-center gap-2 group">
-          <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center text-white shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
-            <Brain size={20} />
-          </div>
-          <span className="text-xl sm:text-2xl font-display font-black tracking-tighter italic uppercase text-text-primary">CareMate</span>
-        </Link>
+        <div className="flex items-center gap-3">
+          {location.pathname !== "/" && location.pathname !== "/patient" && location.pathname !== "/caregiver" && location.pathname !== "/doctor" && (
+            <button 
+              onClick={() => window.history.back()}
+              className="p-2 bg-surface-main border border-border-main rounded-xl text-text-secondary hover:text-primary transition-all hover:scale-110 active:scale-95"
+            >
+              <ChevronLeft size={20} />
+            </button>
+          )}
+          <Link to="/" className="flex items-center gap-2 group">
+            <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center text-white shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
+              <Brain size={20} />
+            </div>
+            <span className="text-xl sm:text-2xl font-display font-black tracking-tighter italic uppercase text-text-primary">CareMate</span>
+          </Link>
+        </div>
         <div className="flex items-center gap-2 sm:gap-4">
           <button 
             onClick={toggleTheme}

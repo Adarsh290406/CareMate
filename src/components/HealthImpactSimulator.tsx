@@ -20,8 +20,8 @@ const data = [
   { time: "10 PM", protection: 10 },
 ];
 
-export default function HealthImpactSimulator({ medications }: ImpactSimulatorProps) {
-  const [selectedMed, setSelectedMed] = useState(medications[0]?.name || "");
+export default function HealthImpactSimulator({ medications = [] }: ImpactSimulatorProps) {
+  const [selectedMed, setSelectedMed] = useState(medications?.[0]?.name || "");
   const [loading, setLoading] = useState(false);
   const [impactData, setImpactData] = useState<any>(null);
   const [chartData, setChartData] = useState(data);
