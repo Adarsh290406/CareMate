@@ -156,7 +156,7 @@ export default function Meds() {
             onClick={() => setActiveTab("active")}
             className={cn(
               "flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2",
-              activeTab === "active" ? "bg-primary text-text-primary shadow-lg shadow-primary/20" : "text-text-secondary hover:text-text-primary"
+              activeTab === "active" ? "bg-primary text-text-primary shadow-lg shadow-primary/20" : "text-text-secondary hover:text-text-primary hover:bg-primary/5"
             )}
           >
             <Play size={14} fill={activeTab === "active" ? "currentColor" : "none"} /> Active
@@ -165,7 +165,7 @@ export default function Meds() {
             onClick={() => setActiveTab("paused")}
             className={cn(
               "flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2",
-              activeTab === "paused" ? "bg-bg-main text-text-primary shadow-lg" : "text-text-secondary hover:text-text-primary"
+              activeTab === "paused" ? "bg-primary text-text-primary shadow-lg shadow-primary/20" : "text-text-secondary hover:text-text-primary hover:bg-primary/5"
             )}
           >
             <Pause size={14} fill={activeTab === "paused" ? "currentColor" : "none"} /> Paused

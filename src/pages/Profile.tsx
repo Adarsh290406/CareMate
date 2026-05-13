@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "motion/react";
-import { User, LogOut, Bell, Shield, Heart, FileText, Moon, Sun, Settings, Edit3, ChevronRight, TrendingUp, Award, Zap, Clock, Book, Brain, Activity, Camera, Users } from "lucide-react";
+import { User, LogOut, Bell, Shield, Heart, FileText, Moon, Sun, Settings, Edit3, ChevronRight, TrendingUp, Award, Zap, Clock, Book, Brain, Activity, Camera, Users, MessageSquare, Video } from "lucide-react";
 import { cn } from "../lib/utils";
 import { useAuth } from "../hooks/useAuth";
 import { useMedications } from "../hooks/useMedications";
-import { auth } from "../lib/firebase";
+import { auth, db } from "../lib/firebase";
 import { useNavigate } from "react-router-dom";
-
+import { usePatientCaregivers } from "../hooks/usePatientCaregivers";
 import { requestNotificationPermission, showNotification } from "../services/notificationService";
 
 export default function Profile() {
-  const { profile } = useAuth();
+  const { user, profile } = useAuth();
   const navigate = useNavigate();
+  const { caregivers, loading: caregiversLoading } = usePatientCaregivers(user?.uid);
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem('theme') === 'dark');
   const [pushEnabled, setPushEnabled] = useState(() => Notification.permission === 'granted');
   const [elderlyMode, setElderlyMode] = useState(() => document.documentElement.classList.contains('elderly-mode'));
@@ -138,6 +139,7 @@ export default function Profile() {
           </span>
         </div>
       </section>
+
 
       {/* Stats Row */}
       <section className={cn(

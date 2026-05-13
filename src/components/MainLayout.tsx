@@ -5,13 +5,16 @@ import { Home, Pill, MessageSquare, Heart, User, Bell, ChevronLeft, X, Brain, Se
 import { useAuth } from "../hooks/useAuth";
 import { cn } from "../lib/utils";
 import { NotificationManager } from "./NotificationManager";
+import { useIncomingCall } from "../hooks/useIncomingCall";
+import IncomingCallOverlay from "./IncomingCallOverlay";
 
 interface MainLayoutProps {
   children: React.ReactNode;
 }
 
 export default function MainLayout({ children }: MainLayoutProps) {
-  const { profile } = useAuth();
+  const { user, profile } = useAuth();
+  const { incomingCall, setIncomingCall } = useIncomingCall(user?.uid);
   const location = useLocation();
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [showInstall, setShowInstall] = useState(false);
@@ -76,9 +79,76 @@ export default function MainLayout({ children }: MainLayoutProps) {
   ];
 
   return (
-    <div className="min-h-screen pb-24">
+    <div className="min-h-screen pb-24 lg:pb-0 lg:pl-72 transition-all duration-500">
       <NotificationManager />
+      <IncomingCallOverlay call={incomingCall} onClose={() => setIncomingCall(null)} />
       
+      {/* Desktop Sidebar */}
+      <aside className="fixed left-0 top-0 bottom-0 w-72 bg-surface-main border-r border-border-main hidden lg:flex flex-col z-[70]">
+        <div className="p-10 flex flex-col items-center text-center">
+          <Link to="/" className="flex flex-col items-center gap-4 group">
+            <div className="w-16 h-16 rounded-[2rem] bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center text-black shadow-2xl shadow-primary/20 group-hover:scale-110 transition-all duration-500 relative overflow-hidden">
+              <div className="absolute inset-0 bg-white/10 animate-pulse" />
+              <Brain size={32} className="relative z-10" />
+            </div>
+            <div className="flex flex-col items-center">
+              <span className="text-3xl font-display font-black tracking-tighter italic uppercase leading-none text-text-primary">CareMate</span>
+              <div className="flex items-center gap-2 mt-2">
+                <div className="w-8 h-[1px] bg-primary/30" />
+                <span className="text-[9px] font-black uppercase tracking-[0.4em] text-primary">Intelligence</span>
+                <div className="w-8 h-[1px] bg-primary/30" />
+              </div>
+            </div>
+          </Link>
+        </div>
+
+        <div className="flex-1 px-8 space-y-3">
+          {navItems.map((item) => {
+            const isActive = location.pathname === item.path;
+            return (
+              <Link 
+                key={item.path}
+                to={item.path}
+                className={cn(
+                  "flex items-center gap-4 p-4 rounded-2xl transition-all duration-500 group relative",
+                  isActive 
+                    ? "bg-primary text-black shadow-2xl shadow-primary/20 scale-105" 
+                    : "text-text-secondary hover:bg-black/5 dark:hover:bg-white/5 hover:text-text-primary hover:translate-x-2"
+                )}
+              >
+                <item.icon size={22} className={cn("transition-transform group-hover:scale-110", isActive ? "stroke-[2.5px]" : "stroke-[2px]")} />
+                <span className="text-xs font-black uppercase tracking-widest">{item.label}</span>
+                {isActive && (
+                   <motion.div 
+                     layoutId="sidebar-indicator"
+                     className="absolute right-0 w-1.5 h-8 bg-black rounded-l-full"
+                   />
+                )}
+              </Link>
+            );
+          })}
+        </div>
+
+        <div className="p-8 border-t border-border-main space-y-6">
+           <div className="flex items-center gap-4 p-4 bg-bg-main/50 border border-border-main rounded-3xl">
+              <div className="w-10 h-10 rounded-full border-2 border-primary p-0.5 overflow-hidden">
+                <img 
+                  src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${profile?.name || 'CareMate'}`} 
+                  alt="Avatar" 
+                  className="w-full h-full rounded-full object-cover" 
+                />
+              </div>
+              <div className="flex-1 overflow-hidden">
+                <p className="text-xs font-black text-text-primary truncate uppercase tracking-tight">{profile?.name || "User"}</p>
+                <p className="text-[9px] font-bold text-primary uppercase tracking-widest">{profile?.role || "Patient"}</p>
+              </div>
+              <button onClick={toggleTheme} className="p-2 hover:bg-primary/10 rounded-xl transition-colors text-text-secondary">
+                {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
+              </button>
+           </div>
+        </div>
+      </aside>
+
       {/* Notifications Panel */}
       <AnimatePresence>
         {showNotifications && (
@@ -88,39 +158,44 @@ export default function MainLayout({ children }: MainLayoutProps) {
               animate={{ opacity: 1 }} 
               exit={{ opacity: 0 }}
               onClick={() => setShowNotifications(false)}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[70]"
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100]"
             />
             <motion.div 
               initial={{ x: 300, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: 300, opacity: 0 }}
-              className="fixed top-0 right-0 bottom-0 w-80 bg-surface-main border-l border-border-main z-[80] shadow-2xl p-6 overflow-y-auto no-scrollbar"
+              className="fixed top-0 right-0 bottom-0 w-96 bg-surface-main border-l border-border-main z-[110] shadow-2xl p-8 overflow-y-auto no-scrollbar"
             >
-              <div className="flex items-center justify-between mb-8">
-                <h2 className="text-xl font-black italic uppercase tracking-tight text-text-primary">Notifications</h2>
-                <button onClick={() => setShowNotifications(false)} className="p-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-full transition-colors">
-                  <X size={20} className="text-text-secondary" />
+              <div className="flex items-center justify-between mb-10">
+                <div>
+                  <h2 className="text-2xl font-black italic uppercase tracking-tighter text-text-primary leading-none">Notifications</h2>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-primary mt-2">Personal Assistant</p>
+                </div>
+                <button onClick={() => setShowNotifications(false)} className="p-3 bg-bg-main border border-border-main rounded-2xl hover:text-danger transition-colors">
+                  <X size={20} />
                 </button>
               </div>
               
               <div className="space-y-4">
                 {notifications.map((n) => (
-                  <div key={n.id} className="p-4 rounded-2xl bg-bg-main border border-border-main space-y-2 group hover:bg-primary/5 transition-colors">
+                  <div key={n.id} className="p-5 rounded-3xl bg-bg-main border border-border-main space-y-3 group hover:border-primary/30 transition-all">
                     <div className="flex items-center justify-between">
                       <span className={cn(
-                        "text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full",
-                        n.type === 'info' ? "bg-secondary/20 text-secondary" : "bg-safe/20 text-safe"
+                        "text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full",
+                        n.type === 'info' ? "bg-secondary/10 text-secondary" : "bg-safe/10 text-safe"
                       )}>{n.type}</span>
-                      <span className="text-[10px] text-text-secondary font-bold">{n.time}</span>
+                      <span className="text-[10px] text-text-secondary font-bold opacity-40">{n.time}</span>
                     </div>
-                    <h3 className="text-sm font-bold text-text-primary">{n.title}</h3>
-                    <p className="text-xs text-text-secondary leading-relaxed">{n.message}</p>
+                    <h3 className="text-sm font-bold text-text-primary leading-tight">{n.title}</h3>
+                    <p className="text-xs text-text-secondary leading-relaxed opacity-70">{n.message}</p>
                   </div>
                 ))}
               </div>
               
-              <div className="mt-8 pt-8 border-t border-border-main text-center">
-                <button className="text-[10px] font-black uppercase tracking-widest text-primary hover:underline">Mark all as read</button>
+              <div className="mt-10 pt-8 border-t border-border-main text-center">
+                <button className="text-[10px] font-black uppercase tracking-widest text-primary hover:underline group flex items-center justify-center gap-2 mx-auto">
+                   Clear all messages <ChevronLeft size={14} className="rotate-180" />
+                </button>
               </div>
             </motion.div>
           </>
@@ -134,7 +209,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
             initial={{ y: -100 }}
             animate={{ y: 0 }}
             exit={{ y: -100 }}
-            className="fixed top-0 left-0 right-0 z-[100] p-4 bg-primary text-white flex items-center justify-between shadow-lg"
+            className="fixed top-0 left-0 right-0 z-[100] p-4 bg-primary text-white flex items-center justify-between shadow-lg lg:left-72"
           >
             <div className="flex items-center gap-3">
               <div className="p-2 bg-white/20 rounded-xl">
@@ -160,64 +235,71 @@ export default function MainLayout({ children }: MainLayoutProps) {
 
       {/* Top Status Bar */}
       <header className={cn(
-        "fixed top-0 left-0 right-0 h-16 px-4 sm:px-6 flex items-center justify-between z-[60] transition-all duration-300",
+        "fixed top-0 left-0 right-0 h-20 px-6 sm:px-10 flex items-center justify-between z-[60] transition-all duration-500 lg:left-72",
         scrolled || showInstall ? "bg-surface-main/95 backdrop-blur-xl border-b border-border-main shadow-2xl shadow-primary/5" : "bg-transparent"
       )}>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           {location.pathname !== "/" && location.pathname !== "/patient" && location.pathname !== "/caregiver" && location.pathname !== "/doctor" && (
             <button 
               onClick={() => window.history.back()}
-              className="p-2 bg-surface-main border border-border-main rounded-xl text-text-secondary hover:text-primary transition-all hover:scale-110 active:scale-95"
+              className="p-3 bg-surface-main border border-border-main rounded-2xl text-text-secondary hover:text-primary transition-all hover:scale-110 active:scale-95 shadow-lg"
             >
               <ChevronLeft size={20} />
             </button>
           )}
-          <Link to="/" className="flex items-center gap-2 group">
-            <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center text-white shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
-              <Brain size={20} />
+          <div className="hidden lg:block">
+             <h2 className="text-2xl font-black italic uppercase tracking-tighter text-text-primary leading-none">
+                {navItems.find(item => item.path === location.pathname)?.label || "Dashboard"}
+             </h2>
+             <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mt-2">Personal Oversight</p>
+          </div>
+          <Link to="/" className="flex items-center gap-3 group lg:hidden">
+            <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform">
+              <Brain size={22} />
             </div>
-            <span className="text-xl sm:text-2xl font-display font-black tracking-tighter italic uppercase text-text-primary">CareMate</span>
+            <span className="text-2xl font-display font-black tracking-tighter italic uppercase text-text-primary">CareMate</span>
           </Link>
         </div>
-        <div className="flex items-center gap-2 sm:gap-4">
-          <button 
-            onClick={toggleTheme}
-            className="p-2 hover:bg-primary/10 rounded-xl transition-colors text-text-secondary hover:text-primary"
-          >
-            {theme === 'light' ? <Moon size={22} /> : <Sun size={22} />}
-          </button>
+
+        <div className="flex items-center gap-3 sm:gap-6">
+          <div className="hidden md:flex items-center gap-6 px-6 py-2 bg-bg-main/50 border border-border-main rounded-full mr-4">
+             <div className="flex flex-col items-end">
+                <span className="text-[9px] font-black uppercase tracking-widest text-text-secondary leading-none">System Status</span>
+                <span className="text-[10px] font-bold text-safe uppercase mt-1">Operational</span>
+             </div>
+             <div className="w-2 h-2 rounded-full bg-safe animate-pulse" />
+          </div>
+
           <button 
             onClick={() => setShowNotifications(true)}
-            className="relative p-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-xl transition-colors"
+            className="relative p-3 bg-surface-main border border-border-main rounded-2xl hover:text-primary transition-all hover:scale-110 active:scale-95 shadow-lg group"
           >
-            <Bell size={22} className="text-text-secondary" />
-            <div className="absolute top-2.5 right-2.5 w-2.5 h-2.5 bg-critical rounded-full border-2 border-surface-main animate-pulse" />
+            <Bell size={22} className="text-text-secondary group-hover:text-primary transition-colors" />
+            <div className="absolute top-3 right-3 w-3 h-3 bg-critical rounded-full border-2 border-surface-main animate-pulse shadow-sm" />
           </button>
-          <Link to="/profile" className="p-2 hover:bg-white/5 rounded-xl transition-colors">
-            <Settings size={22} className="text-text-secondary" />
-          </Link>
+
           <Link 
             to="/profile" 
-            className="w-10 h-10 rounded-full border-2 border-primary p-0.5 hover:scale-105 active:scale-95 transition-all shadow-lg shadow-primary/10 overflow-hidden"
+            className="w-12 h-12 rounded-full border-2 border-primary p-1 hover:scale-110 active:scale-95 transition-all shadow-xl shadow-primary/10 overflow-hidden bg-surface-main"
           >
             <img 
               src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${profile?.name || 'CareMate'}`} 
               alt="Avatar" 
-              className="w-full h-full rounded-full object-cover bg-dark-secondary" 
+              className="w-full h-full rounded-full object-cover" 
             />
           </Link>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="pt-20 px-6 max-w-5xl mx-auto">
+      <main className="pt-28 px-6 sm:px-10 max-w-[1600px] mx-auto transition-all duration-500">
         <AnimatePresence mode="wait">
           {children}
         </AnimatePresence>
       </main>
 
-      {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 h-20 bg-surface-main/90 backdrop-blur-xl border-t border-border-main flex items-center justify-around px-2 z-[60]">
+      {/* Bottom Navigation (Mobile Only) */}
+      <nav className="fixed bottom-0 left-0 right-0 h-24 bg-surface-main/90 backdrop-blur-2xl border-t border-border-main flex items-center justify-around px-4 z-[60] lg:hidden shadow-[0_-20px_50px_rgba(0,0,0,0.1)]">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
           return (
@@ -225,19 +307,25 @@ export default function MainLayout({ children }: MainLayoutProps) {
               key={item.path}
               to={item.path}
               className={cn(
-                "flex flex-col items-center justify-center gap-1 min-w-[64px] transition-all duration-300",
-                isActive ? "text-primary" : "text-text-secondary hover:text-text-primary"
+                "flex flex-col items-center justify-center gap-1.5 min-w-[70px] transition-all duration-500",
+                isActive ? "text-primary scale-110" : "text-text-secondary hover:text-text-primary"
               )}
             >
               <div className={cn(
-                "p-2 rounded-xl transition-all duration-300",
-                isActive ? "bg-primary/10 shadow-[0_0_20px_rgba(0,212,170,0.2)]" : "bg-transparent"
+                "p-3 rounded-2xl transition-all duration-500 relative",
+                isActive ? "bg-primary/10 shadow-[0_0_30px_rgba(0,212,170,0.3)]" : "bg-transparent"
               )}>
-                <item.icon size={22} className={isActive ? "stroke-[2.5px]" : "stroke-[2px]"} />
+                {isActive && (
+                  <motion.div 
+                    layoutId="nav-active"
+                    className="absolute inset-0 bg-primary/10 rounded-2xl z-[-1]"
+                  />
+                )}
+                <item.icon size={24} className={isActive ? "stroke-[2.5px]" : "stroke-[2px]"} />
               </div>
               <span className={cn(
-                "text-[10px] font-bold uppercase tracking-widest transition-all",
-                isActive ? "opacity-100 translate-y-0" : "opacity-0 translate-y-1"
+                "text-[10px] font-black uppercase tracking-widest transition-all",
+                isActive ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
               )}>
                 {item.label}
               </span>

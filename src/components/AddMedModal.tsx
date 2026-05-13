@@ -4,7 +4,7 @@ import { db } from "../lib/firebase";
 import { checkMedsInteraction } from "../lib/gemini";
 import { useMedications } from "../hooks/useMedications";
 import { motion, AnimatePresence } from "motion/react";
-import { X, Pill, Clock, Hash, AlertCircle, Mic, Video, StopCircle, RotateCcw, Play, Camera } from "lucide-react";
+import { X, Pill, Clock, Hash, AlertCircle, Mic, Video, StopCircle, RotateCcw, Play, Camera, ChevronRight, Brain } from "lucide-react";
 import { cn } from "../lib/utils";
 
 interface AddMedModalProps {
@@ -234,175 +234,192 @@ export default function AddMedModal({ patientId, isOpen, onClose, language = "En
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-100 flex items-center justify-center p-4">
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/70 backdrop-blur-md"
           />
           <motion.div 
-            initial={{ scale: 0.95, opacity: 0, y: 20 }}
+            initial={{ scale: 0.9, opacity: 0, y: 30 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
-            exit={{ scale: 0.95, opacity: 0, y: 20 }}
-            className="relative w-full max-w-md dense-card p-6 bg-surface border border-white/10 shadow-2xl overflow-y-auto max-h-[90vh]"
+            exit={{ scale: 0.9, opacity: 0, y: 30 }}
+            className="relative w-full max-w-xl bg-surface-main border border-border-main rounded-[3rem] p-10 shadow-[0_50px_100px_rgba(0,0,0,0.4)] overflow-y-auto max-h-[95vh] no-scrollbar"
           >
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold flex items-center gap-2">
-                <Pill className="text-primary-accent" size={20} />
-                New Medication
-              </h2>
-              <div className="flex items-center gap-1">
-                <button 
-                  type="button"
-                  onClick={() => startCamera("prescription")}
-                  className="p-1 px-2 bg-primary-accent/10 text-primary-accent rounded-lg border border-primary-accent/20 hover:bg-primary-accent/20 transition-all flex items-center gap-1.5 text-[8px] font-black uppercase tracking-widest"
-                >
-                  <Camera size={12} /> Scan Rx
-                </button>
-                <button 
-                  type="button"
-                  onClick={() => startCamera("scan")}
-                  className="p-1 px-2 bg-primary-accent/10 text-primary-accent rounded-lg border border-primary-accent/20 hover:bg-primary-accent/20 transition-all flex items-center gap-1.5 text-[8px] font-black uppercase tracking-widest"
-                >
-                  <Camera size={12} /> Scan Pill
-                </button>
-                <button onClick={onClose} className="p-2 hover:bg-white/5 rounded-full transition-colors ml-1">
-                  <X size={20} />
-                </button>
+            <div className="flex items-center justify-between mb-10">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-xl shadow-primary/10">
+                  <Pill size={28} />
+                </div>
+                <div>
+                  <h2 className="text-3xl font-black italic uppercase tracking-tighter text-text-primary leading-none">New Medication</h2>
+                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mt-2">Clinical Registration</p>
+                </div>
               </div>
+              <button onClick={onClose} className="p-4 bg-bg-main border border-border-main rounded-2xl text-text-secondary hover:text-danger transition-all hover:scale-110 active:scale-95 shadow-lg">
+                <X size={20} />
+              </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-1">
-                <label className="text-[10px] font-black uppercase tracking-widest text-text-muted">Drug Name</label>
-                <div className="relative">
+            <div className="flex items-center gap-2 mb-8">
+              <button 
+                type="button"
+                onClick={() => startCamera("prescription")}
+                className="flex-1 py-4 bg-primary/10 text-primary rounded-2xl border border-primary/20 hover:bg-primary hover:text-black transition-all flex items-center justify-center gap-3 text-[10px] font-black uppercase tracking-widest shadow-lg active:scale-95"
+              >
+                <Camera size={18} /> Scan Prescription
+              </button>
+              <button 
+                type="button"
+                onClick={() => startCamera("scan")}
+                className="flex-1 py-4 bg-secondary/10 text-secondary rounded-2xl border border-secondary/20 hover:bg-secondary hover:text-white transition-all flex items-center justify-center gap-3 text-[10px] font-black uppercase tracking-widest shadow-lg active:scale-95"
+              >
+                <Camera size={18} /> Identify Pill
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-8">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between px-2">
+                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary opacity-60">Drug Name</label>
+                  {listeningField === "name" && <span className="text-[9px] font-black uppercase tracking-widest text-danger animate-pulse">Listening...</span>}
+                </div>
+                <div className="relative group">
                   <input 
                     required
                     value={formData.name}
                     onChange={e => setFormData({...formData, name: e.target.value})}
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 pr-12 focus:outline-none focus:border-primary-accent/50"
+                    className="w-full bg-bg-main border-2 border-border-main rounded-3xl px-6 py-5 pr-14 text-lg font-bold text-text-primary focus:outline-none focus:border-primary transition-all group-hover:border-border-main/50"
                     placeholder="e.g., Lisinopril"
                   />
                   <button
                     type="button"
                     onClick={() => startListening("name")}
                     className={cn(
-                      "absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-lg transition-all",
-                      listeningField === "name" ? "bg-danger text-white animate-pulse" : "text-text-muted hover:bg-white/10"
+                      "absolute right-3 top-1/2 -translate-y-1/2 p-3 rounded-2xl transition-all",
+                      listeningField === "name" ? "bg-danger text-white shadow-lg shadow-danger/20 animate-pulse" : "bg-surface-main border border-border-main text-text-secondary hover:text-primary hover:scale-110"
                     )}
                   >
-                    <Mic size={16} />
+                    <Mic size={20} />
                   </button>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-text-muted">Dosage</label>
-                  <div className="relative">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="space-y-3">
+                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary opacity-60 px-2">Dosage Strength</label>
+                  <div className="relative group">
                     <input 
                       required
                       value={formData.dosage}
                       onChange={e => setFormData({...formData, dosage: e.target.value})}
-                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 pr-12 focus:outline-none focus:border-primary-accent/50"
+                      className="w-full bg-bg-main border-2 border-border-main rounded-3xl px-6 py-5 pr-14 text-lg font-bold text-text-primary focus:outline-none focus:border-primary transition-all group-hover:border-border-main/50"
                       placeholder="10mg"
                     />
                     <button
                       type="button"
                       onClick={() => startListening("dosage")}
                       className={cn(
-                        "absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-lg transition-all",
-                        listeningField === "dosage" ? "bg-danger text-white animate-pulse" : "text-text-muted hover:bg-white/10"
+                        "absolute right-3 top-1/2 -translate-y-1/2 p-3 rounded-2xl transition-all",
+                        listeningField === "dosage" ? "bg-danger text-white shadow-lg shadow-danger/20 animate-pulse" : "bg-surface-main border border-border-main text-text-secondary hover:text-primary hover:scale-110"
                       )}
                     >
-                      <Mic size={16} />
+                      <Mic size={20} />
                     </button>
                   </div>
                 </div>
-                <div className="space-y-1">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-text-muted">Next Time</label>
-                  <div className="relative">
-                    <Clock size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted" />
+                <div className="space-y-3">
+                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary opacity-60 px-2">Scheduled Intake</label>
+                  <div className="relative group">
+                    <Clock size={20} className="absolute left-6 top-1/2 -translate-y-1/2 text-primary" />
                     <input 
                       required
                       type="time"
                       value={formData.time}
                       onChange={e => setFormData({...formData, time: e.target.value})}
-                      className="w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 py-3 focus:outline-none focus:border-primary-accent/50"
+                      className="w-full bg-bg-main border-2 border-border-main rounded-3xl pl-16 pr-6 py-5 text-lg font-black text-text-primary focus:outline-none focus:border-primary transition-all group-hover:border-border-main/50"
                     />
                   </div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-text-muted">Stock Level</label>
-                  <div className="relative">
-                    <Hash size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="space-y-3">
+                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary opacity-60 px-2">Current Stock</label>
+                  <div className="relative group">
+                    <Hash size={20} className="absolute left-6 top-1/2 -translate-y-1/2 text-secondary" />
                     <input 
                       required
                       type="number"
                       value={formData.pillsRemaining}
                       onChange={e => setFormData({...formData, pillsRemaining: Number(e.target.value)})}
-                      className="w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 py-3 focus:outline-none focus:border-primary-accent/50"
+                      className="w-full bg-bg-main border-2 border-border-main rounded-3xl pl-16 pr-6 py-5 text-lg font-black text-text-primary focus:outline-none focus:border-primary transition-all group-hover:border-border-main/50"
                     />
                   </div>
                 </div>
-                <div className="space-y-1">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-text-muted">Refill Threshold</label>
-                  <div className="relative">
-                    <AlertCircle size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted" />
+                <div className="space-y-3">
+                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary opacity-60 px-2">Refill Alert At</label>
+                  <div className="relative group">
+                    <AlertCircle size={20} className="absolute left-6 top-1/2 -translate-y-1/2 text-warning" />
                     <input 
                       required
                       type="number"
                       value={formData.refillThreshold}
                       onChange={e => setFormData({...formData, refillThreshold: Number(e.target.value)})}
-                      className="w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 py-3 focus:outline-none focus:border-primary-accent/50"
+                      className="w-full bg-bg-main border-2 border-border-main rounded-3xl pl-16 pr-6 py-5 text-lg font-black text-text-primary focus:outline-none focus:border-primary transition-all group-hover:border-border-main/50"
                     />
                   </div>
                 </div>
               </div>
 
-              {/* Video Instruction Feature (Feature 17) */}
-              <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-text-muted flex items-center gap-2">
-                  <Video size={12} /> Demonstration Video
-                </label>
+              {/* Video Instruction Feature */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between px-2">
+                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary opacity-60 flex items-center gap-2">
+                    <Video size={14} /> Intake Demonstration
+                  </label>
+                  <span className="text-[9px] font-black uppercase tracking-widest text-primary/60">Optional AI Feature</span>
+                </div>
                 
                 {!showCamera && !videoBase64 && (
                   <button
                     type="button"
                     onClick={startCamera}
-                    className="w-full py-4 border-2 border-dashed border-white/10 rounded-xl text-text-muted hover:border-primary-accent/50 hover:text-primary-accent transition-all flex flex-col items-center gap-2"
+                    className="w-full py-10 border-2 border-dashed border-border-main rounded-[2.5rem] bg-bg-main/30 text-text-secondary hover:border-primary hover:bg-primary/5 hover:text-primary transition-all flex flex-col items-center gap-4 group shadow-inner"
                   >
-                    <Video size={24} />
-                    <span className="text-[10px] font-black uppercase tracking-widest">Record Intake Demo</span>
+                    <div className="w-16 h-16 rounded-full bg-bg-main border border-border-main flex items-center justify-center group-hover:scale-110 transition-transform shadow-xl">
+                      <Video size={28} />
+                    </div>
+                    <div className="text-center">
+                      <p className="text-xs font-black uppercase tracking-widest">Record Intake Tutorial</p>
+                      <p className="text-[9px] opacity-50 uppercase tracking-widest mt-1">Help caregivers understand dosing</p>
+                    </div>
                   </button>
                 )}
 
                 {showCamera && (
-                  <div className="relative bg-black rounded-xl overflow-hidden aspect-video">
+                  <div className="relative bg-black rounded-[2.5rem] overflow-hidden aspect-video shadow-2xl border-2 border-primary/20">
                     <video ref={videoRef} autoPlay muted playsInline className="w-full h-full object-cover" />
                     <canvas ref={canvasRef} className="hidden" />
-                    <div className="absolute inset-x-0 bottom-4 flex justify-center gap-4">
+                    <div className="absolute inset-x-0 bottom-6 flex justify-center gap-4">
                       {cameraMode === "video" ? (
                         !isRecording ? (
                           <button
                             type="button"
                             onClick={startRecording}
-                            className="bg-danger text-white p-3 rounded-full shadow-lg"
+                            className="bg-danger text-white w-16 h-16 rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition-transform"
                           >
-                            <Video size={20} />
+                            <Video size={28} />
                           </button>
                         ) : (
                           <button
                             type="button"
                             onClick={stopRecording}
-                            className="bg-white text-danger p-3 rounded-full shadow-lg animate-pulse"
+                            className="bg-white text-danger w-16 h-16 rounded-full shadow-2xl flex items-center justify-center animate-pulse"
                           >
-                            <StopCircle size={20} />
+                            <StopCircle size={28} />
                           </button>
                         )
                       ) : (
@@ -410,22 +427,30 @@ export default function AddMedModal({ patientId, isOpen, onClose, language = "En
                           type="button"
                           onClick={capturePhoto}
                           disabled={isScanning}
-                          className="bg-primary-accent text-white px-6 py-3 rounded-full shadow-lg font-black uppercase tracking-widest text-[10px] flex items-center gap-2"
+                          className="bg-primary text-black px-10 py-5 rounded-[2rem] shadow-2xl font-black uppercase tracking-widest text-[11px] flex items-center gap-3 hover:scale-105 active:scale-95 transition-all"
                         >
                           {isScanning ? (
-                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                            <div className="w-5 h-5 border-3 border-black/30 border-t-black rounded-full animate-spin" />
                           ) : (
-                            <Camera size={16} />
+                            <Camera size={20} />
                           )}
-                          {isScanning ? "Identifying..." : cameraMode === "prescription" ? "Scan Prescription" : "Identify Pill"}
+                          {isScanning ? "Processing AI..." : cameraMode === "prescription" ? "Analyze Prescription" : "Verify Pill"}
                         </button>
                       )}
                     </div>
+                    {isScanning && (
+                      <div className="absolute inset-0 bg-primary/20 backdrop-blur-sm flex items-center justify-center">
+                         <div className="text-center space-y-4">
+                            <Brain size={48} className="mx-auto text-black animate-bounce" />
+                            <p className="text-sm font-black uppercase tracking-widest text-black">CareMate AI scanning...</p>
+                         </div>
+                      </div>
+                    )}
                   </div>
                 )}
 
                 {videoBase64 && (
-                  <div className="relative rounded-xl overflow-hidden aspect-video group">
+                  <div className="relative rounded-[2.5rem] overflow-hidden aspect-video group shadow-2xl border-2 border-primary/20">
                     <video src={videoBase64} controls className="w-full h-full object-cover" />
                     <button
                       type="button"
@@ -434,9 +459,9 @@ export default function AddMedModal({ patientId, isOpen, onClose, language = "En
                         setVideoBlob(null);
                         startCamera();
                       }}
-                      className="absolute top-2 right-2 p-2 bg-black/60 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="absolute top-4 right-4 p-4 bg-black/80 rounded-2xl text-white opacity-0 group-hover:opacity-100 transition-all hover:bg-danger hover:scale-110 active:scale-90"
                     >
-                      <RotateCcw size={14} />
+                      <RotateCcw size={20} />
                     </button>
                   </div>
                 )}
@@ -446,47 +471,56 @@ export default function AddMedModal({ patientId, isOpen, onClose, language = "En
                 <motion.div 
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: "auto", opacity: 1 }}
-                  className="p-4 bg-danger/10 border border-danger/20 rounded-xl space-y-2"
+                  className="p-8 bg-danger/10 border-2 border-danger/20 rounded-[2.5rem] space-y-4 shadow-xl"
                 >
-                  <div className="flex items-center gap-2 text-danger font-black text-[10px] uppercase tracking-widest">
-                    <AlertCircle size={14} /> AI Interaction Warning
+                  <div className="flex items-center gap-3 text-danger font-black text-xs uppercase tracking-widest">
+                    <AlertCircle size={20} /> AI Interaction Warning
                   </div>
-                  <p className="text-xs text-text-muted leading-relaxed">
+                  <p className="text-sm text-text-primary font-bold leading-relaxed">
                     {interactionResult.advice}
                   </p>
-                  <ul className="text-[10px] space-y-1">
+                  <ul className="text-xs space-y-2 opacity-80">
                     {interactionResult.warnings.map((w, i) => (
-                      <li key={i} className="flex gap-2">
-                        <span className="text-danger">•</span> {w}
+                      <li key={i} className="flex gap-3">
+                        <span className="text-danger font-black">•</span> {w}
                       </li>
                     ))}
                   </ul>
-                  <div className="flex gap-2 pt-2">
+                  <div className="flex gap-4 pt-4">
                     <button 
                       type="button" 
                       onClick={() => setInteractionResult(null)}
-                      className="text-[9px] font-black uppercase tracking-widest text-white/60 hover:text-white"
+                      className="flex-1 py-4 bg-bg-main border border-border-main rounded-2xl text-[10px] font-black uppercase tracking-widest text-text-secondary hover:text-text-primary transition-all shadow-lg"
                     >
-                      Wait, let me change
+                      Modify Intake
                     </button>
                     <button 
                       type="submit"
-                      className="text-[9px] font-black uppercase tracking-widest text-danger underline"
-                      onClick={() => { /* Skipping check will happen next time because interactionResult is truthfully set */ }}
+                      className="flex-1 py-4 bg-danger text-white rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-danger/20 hover:brightness-110 transition-all"
+                      onClick={() => {}}
                     >
-                      I understand, add anyway
+                      Ignore & Add
                     </button>
                   </div>
                 </motion.div>
               )}
 
-              <button 
-                type="submit"
-                disabled={loading}
-                className="w-full py-4 bg-primary-accent hover:brightness-110 disabled:opacity-50 text-white rounded-xl font-black text-xs uppercase tracking-[0.2em] transition-all shadow-lg shadow-primary-accent/20 mt-4"
-              >
-                {loading ? "Registering Med..." : "Commit Medication Record"}
-              </button>
+              <div className="pt-6">
+                <button 
+                  type="submit"
+                  disabled={loading}
+                  className="w-full py-6 bg-primary hover:brightness-110 disabled:opacity-50 text-black rounded-[2.5rem] font-black text-sm uppercase tracking-[0.3em] transition-all shadow-2xl shadow-primary/30 active:scale-[0.98] flex items-center justify-center gap-3"
+                >
+                  {loading ? (
+                    <div className="w-6 h-6 border-4 border-black/30 border-t-black rounded-full animate-spin" />
+                  ) : (
+                    <>Register Medication <ChevronRight size={20} /></>
+                  )}
+                </button>
+                <p className="text-center text-[9px] font-black uppercase tracking-widest text-text-secondary mt-6 opacity-40">
+                  Data will be securely encrypted and synced to clinical cloud
+                </p>
+              </div>
             </form>
           </motion.div>
         </div>

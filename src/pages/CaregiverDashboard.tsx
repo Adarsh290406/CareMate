@@ -84,7 +84,7 @@ function PatientCard({ patient, onClick }: PatientCardProps) {
 
 export default function CaregiverDashboard() {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const { patients, loading: patientsLoading } = useCaregiverPatients(user?.uid);
   const { alerts, loading: alertsLoading } = useAlerts(user?.uid);
   const [searchEmail, setSearchEmail] = useState("");
@@ -429,29 +429,49 @@ export default function CaregiverDashboard() {
                         navigate(`/family-chat/${selectedPatient.uid}`);
                       }}
                       className={cn(
-                        "flex-1 py-4 border rounded-2xl font-black uppercase text-[9px] tracking-widest transition-all flex items-center justify-center gap-2",
-                        activeDetailTab === "overview" ? "bg-surface-main border-border-main text-text-primary" : "bg-transparent border-transparent text-text-secondary"
+                        "flex-1 py-4.5 px-6 rounded-2xl font-black uppercase text-[10px] tracking-[0.2em] transition-all flex items-center justify-center gap-3 group/btn border",
+                        activeDetailTab === "overview" 
+                          ? "bg-white/5 border-white/10 text-text-primary shadow-xl" 
+                          : "bg-transparent border-transparent text-text-secondary hover:bg-primary/10 hover:border-primary/20 hover:text-primary"
                       )}
                     >
-                       <MessageCircle size={14} /> Chat
+                       <MessageCircle size={16} className="group-hover/btn:scale-110 group-hover/btn:rotate-12 transition-transform" /> Chat
                     </button>
                     <button 
-                      onClick={() => setActiveDetailTab("video")}
+                      onClick={async () => {
+                        try {
+                          const docRef = await addDoc(collection(db, "calls"), {
+                            fromId: user?.uid,
+                            fromName: profile?.name || user?.email || "Caregiver",
+                            toId: selectedPatient.uid || selectedPatient.id,
+                            status: "calling",
+                            createdAt: serverTimestamp(),
+                            type: "video"
+                          });
+                          navigate(`/video-room/${docRef.id}`);
+                        } catch (err) {
+                          console.error("Call failed:", err);
+                        }
+                      }}
                       className={cn(
-                        "flex-1 py-4 rounded-2xl font-black uppercase text-[9px] tracking-widest shadow-lg transition-all flex items-center justify-center gap-2",
-                        activeDetailTab === "video" ? "bg-primary text-black shadow-primary/20" : "bg-transparent text-text-secondary"
+                        "flex-1 py-4.5 px-6 rounded-2xl font-black uppercase text-[10px] tracking-[0.2em] transition-all flex items-center justify-center gap-3 group/btn border",
+                        activeDetailTab === "video" 
+                          ? "bg-primary text-black shadow-lg shadow-primary/20 border-primary" 
+                          : "bg-transparent border-transparent text-text-secondary hover:text-safe hover:bg-safe/5"
                       )}
                     >
-                       <Video size={14} /> Video
+                       <Video size={18} className="group-hover/btn:scale-110 group-hover/btn:-rotate-12 transition-transform" /> Video
                     </button>
                     <button 
                       onClick={() => setActiveDetailTab("analytics")}
                       className={cn(
-                        "flex-1 py-4 border rounded-2xl font-black uppercase text-[9px] tracking-widest transition-all flex items-center justify-center gap-2",
-                        activeDetailTab === "analytics" ? "bg-surface-main border-border-main text-text-primary" : "bg-transparent border-transparent text-text-secondary"
+                        "flex-1 py-4.5 px-6 rounded-2xl font-black uppercase text-[10px] tracking-[0.2em] transition-all flex items-center justify-center gap-3 group/btn border",
+                        activeDetailTab === "analytics" 
+                          ? "bg-white/5 border-white/10 text-text-primary shadow-xl" 
+                          : "bg-transparent border-transparent text-text-secondary hover:bg-ai/10 hover:border-ai/20 hover:text-ai"
                       )}
                     >
-                       <TrendingUp size={14} /> Analytics
+                       <TrendingUp size={16} className="group-hover/btn:scale-110 group-hover/btn:-translate-y-1 transition-transform" /> Data
                     </button>
                  </div>
               </motion.div>

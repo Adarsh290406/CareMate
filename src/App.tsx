@@ -25,6 +25,7 @@ import DrugConverter from "./pages/DrugConverter";
 import FamilyCircle from "./pages/FamilyCircle";
 import FamilyChat from "./pages/FamilyChat";
 import DosageHistory from "./pages/DosageHistory";
+import VideoRoom from "./pages/VideoRoom";
 import { motion, AnimatePresence } from "motion/react";
 import MainLayout from "./components/MainLayout";
 import { Heart } from "lucide-react";
@@ -77,7 +78,7 @@ function RouteGuard({ children, roles }: { children: React.ReactNode, roles?: st
     );
   }
 
-  const needsLayout = !["/login"].includes(window.location.pathname);
+  const needsLayout = !["/login"].includes(window.location.pathname) && !window.location.pathname.startsWith("/video-room");
 
   if (roles && profile && !roles.includes(profile.role)) {
     if (profile.role === "patient") return <Navigate to="/patient" />;
@@ -142,6 +143,7 @@ function MainRoutes() {
         <Route path="/family-circle" element={<RouteGuard roles={["patient", "caregiver"]}><FamilyCircle /></RouteGuard>} />
         <Route path="/family-chat/:memberId" element={<RouteGuard roles={["patient", "caregiver"]}><FamilyChat /></RouteGuard>} />
         <Route path="/dosage-history" element={<RouteGuard><DosageHistory /></RouteGuard>} />
+        <Route path="/video-room/:callId" element={<RouteGuard><VideoRoom /></RouteGuard>} />
         
         {/* Public Emergency Route */}
         <Route path="/emergency-profile/:patientId" element={<EmergencyProfile />} />
