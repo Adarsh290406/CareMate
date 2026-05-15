@@ -800,7 +800,7 @@ export default function Home() {
       </AnimatePresence>
       <PillReminderOverlay 
         doses={doses} 
-        onMarkTaken={handleMarkTaken} 
+        onMarkTaken={markTaken} 
       />
       <AnimatePresence>
         {selectedCaregiver && (
