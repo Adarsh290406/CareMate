@@ -12,6 +12,9 @@ export default defineConfig(({mode}) => {
       tailwindcss(),
       VitePWA({
         registerType: 'autoUpdate',
+        workbox: {
+          maximumFileSizeToCacheInBytes: 5000000 // 5MB limit
+        },
         manifest: {
           name: 'CareMate',
           short_name: 'CareMate',

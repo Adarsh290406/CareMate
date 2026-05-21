@@ -356,7 +356,7 @@ export default function Home() {
             )}
 
             {/* Quick Metrics */}
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                <div className="card p-6 bg-gradient-to-br from-primary/10 via-transparent to-transparent border-primary/20 space-y-4 group">
                   <div className="flex items-center justify-between">
                     <div className="w-10 h-10 rounded-2xl bg-primary/20 flex items-center justify-center text-primary transition-transform group-hover:scale-110">
@@ -452,7 +452,7 @@ export default function Home() {
           </header>
 
           {/* Zone A: SOS & Quick Actions */}
-          <section className="flex gap-4">
+          <section className="flex flex-col sm:flex-row gap-4">
             <button 
               onClick={handleSOS}
               disabled={isSOSLoading}
@@ -586,7 +586,7 @@ export default function Home() {
                 </div>
               </div>
               
-              <div className="grid grid-cols-3 gap-8 w-full pt-8 border-t border-border-main mt-4">
+              <div className="grid grid-cols-3 gap-2 sm:gap-8 w-full pt-8 border-t border-border-main mt-4">
                  <div className="text-center">
                     <p className="text-[9px] font-black text-text-secondary uppercase tracking-widest mb-1">Weekly</p>
                     <p className="text-lg font-black text-text-primary">94%</p>
@@ -674,7 +674,7 @@ export default function Home() {
                     </div>
                   </div>
                   
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <button onClick={() => window.open(`https://www.google.com/maps/search/pharmacy+near+me`, '_blank')} className="py-4 bg-surface-main border border-border-main rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-bg-main transition-all">
                       <MapPin size={16} /> Locate Pharmacy
                     </button>

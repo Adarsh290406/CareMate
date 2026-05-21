@@ -144,7 +144,7 @@ export default function Profile() {
       {/* Stats Row */}
       <section className={cn(
         "grid gap-4",
-        elderlyMode ? "grid-cols-1" : "grid-cols-3"
+        elderlyMode ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-3"
       )}>
         {stats.map((stat) => (
           <div key={stat.label} className="card p-4 text-center flex flex-col items-center gap-1 bg-surface-main border border-border-main rounded-2xl">
