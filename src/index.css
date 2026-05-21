@@ -10,8 +10,10 @@
   --color-secondary: #4F8EF7;
   --color-ai: #8B5CF6;
   --color-critical: #FF4757;
+  --color-danger: #FF4757;
   --color-warning: #FF8C42;
   --color-safe: #2ECC71;
+  --color-success: #2ECC71;
   --color-info: #FFD93D;
   
   /* Onboarding specific dark colors */
@@ -110,16 +112,12 @@
 
 /* Elderly Mode (Accessibility) */
 .elderly-mode {
-  font-size: 1.25rem; /* Base font size increase */
+  font-size: 1.125rem; /* Gentle base font size increase */
 }
 
-.elderly-mode h1 { font-size: 3rem !important; }
-.elderly-mode h2 { font-size: 2.5rem !important; }
-.elderly-mode .text-xs { font-size: 0.875rem !important; }
-.elderly-mode .text-\[10px\] { font-size: 0.875rem !important; }
-.elderly-mode .text-\[9px\] { font-size: 0.75rem !important; }
-.elderly-mode .p-5, .elderly-mode .p-6, .elderly-mode .p-8 { padding: 1.5rem !important; }
-.elderly-mode .gap-2, .elderly-mode .gap-3, .elderly-mode .gap-4 { gap: 1.5rem !important; }
-.elderly-mode .w-10, .elderly-mode .h-10 { width: 3.5rem !important; height: 3.5rem !important; }
-.elderly-mode .w-12, .elderly-mode .h-12 { width: 4rem !important; height: 4rem !important; }
-.elderly-mode .card { border-width: 2px !important; }
+.elderly-mode h1 { font-size: 2.5rem; }
+.elderly-mode h2 { font-size: 2rem; }
+.elderly-mode .text-xs { font-size: 0.875rem; }
+.elderly-mode .text-\[10px\] { font-size: 0.8125rem; }
+.elderly-mode .text-\[9px\] { font-size: 0.75rem; }
+.elderly-mode .card { border-width: 2px; }

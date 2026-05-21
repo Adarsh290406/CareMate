@@ -452,7 +452,7 @@ export default function Patient() {
           </div>
 
           {/* Health Impact Simulator */}
-          <HealthImpactSimulator />
+          <HealthImpactSimulator medications={medications} />
 
           {/* New AI Features (Feature 22 & 40) */}
           <SymptomAnalyzer medications={medications} />

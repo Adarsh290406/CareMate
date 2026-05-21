@@ -75,19 +75,22 @@ async function startServer() {
       // Fallback to Gemini
       if (!ai) throw new Error("AI Service not configured");
       
-      console.log("Attempting Gemini call with gemini-2.0-flash...");
-      const model = ai.getGenerativeModel({ model: "gemini-1.5-flash", systemInstruction });
-      const result = await model.generateContent({
+      console.log("Attempting Gemini call with gemini-1.5-flash...");
+      const result = await ai.models.generateContent({
+        model: "gemini-1.5-flash",
         contents: [
           ...history.map((h: any) => ({
             role: h.sender === "user" ? "user" : "model",
             parts: [{ text: h.text }]
           })),
           { role: "user", parts: [{ text: message }] }
-        ]
+        ],
+        config: {
+          systemInstruction
+        }
       });
 
-      res.json({ text: result.response.text() });
+      res.json({ text: result.text });
     } catch (err: any) {
       console.error("AI API Error:", err.message || err);
       res.status(500).json({ error: "I'm having trouble connecting to my AI core right now." });
@@ -130,12 +133,15 @@ async function startServer() {
 
       // Fallback to Gemini
       if (!ai) throw new Error("AI Service not configured");
-      const result = await ai.getGenerativeModel({ model: "gemini-1.5-flash" }).generateContent({
-        contents: [{ role: "user", parts: [{ text: userPrompt }] }],
-        generationConfig: { maxOutputTokens: 2048 },
-        systemInstruction
+      const result = await ai.models.generateContent({
+        model: "gemini-1.5-flash",
+        contents: userPrompt,
+        config: {
+          systemInstruction,
+          maxOutputTokens: 2048
+        }
       });
-      res.json({ text: result.response.text() });
+      res.json({ text: result.text });
     } catch (err: any) {
       res.status(500).json({ error: "Generation failed." });
     }
@@ -172,13 +178,15 @@ async function startServer() {
 
       // Try Gemini First (Best for OCR)
       try {
-        const model = ai.getGenerativeModel({ model: "gemini-1.5-flash" });
-        const result = await model.generateContent([
-          prompt,
-          { inlineData: { mimeType: "image/jpeg", data: base64Data } }
-        ]);
+        const result = await ai.models.generateContent({
+          model: "gemini-1.5-flash",
+          contents: [
+            prompt,
+            { inlineData: { mimeType: "image/jpeg", data: base64Data } }
+          ]
+        });
 
-        const jsonStr = result.response.text().match(/\{[\s\S]*\}/)?.[0];
+        const jsonStr = result.text?.match(/\{[\s\S]*\}/)?.[0];
         if (jsonStr) return res.json(JSON.parse(jsonStr));
         else res.json(task === "identify-pill" ? { pillName: "Unknown", name: "Unknown" } : { medications: [] });
         return;

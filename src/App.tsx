@@ -105,7 +105,7 @@ function MainRoutes() {
   const location = useLocation();
   return (
     <AnimatePresence mode="wait">
-      <Routes location={location} key={location.pathname}>
+      <Routes location={location} {...{ key: location.pathname }}>
         <Route path="/login" element={<Login />} />
         
         <Route path="/patient" element={
